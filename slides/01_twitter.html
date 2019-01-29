@@ -1,0 +1,2874 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Social Network Analysis</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Javier Álvarez-Gálvez, PhD   Víctor Sanz, PhD Student    victor.sanz@uca.es    @vsslledo   VictorSuarezL" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="title_slide.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Social Network Analysis <br> <i class="fas fa-globe"></i>   <i class="fas fa-laptop"></i>   <i class="fas fa-chart-line"></i> <br>
+## Twitter Data
+### Javier Álvarez-Gálvez, PhD <br> Víctor Sanz, PhD Student <br><br><a href="mailto:victor.sanz@uca.es"><i class="fa fa-paper-plane fa-fw"></i> victor.sanz@uca.es</a><br><a href="https://twitter.com/vsslledo"> <i class="fab fa-twitter"></i>  <span class="citation">@vsslledo</span></a><br><a href="https://github.com/VictorSuarezL"><i class="fab fa-github"></i>  VictorSuarezL</a>
+
+---
+
+
+
+
+
+
+
+# &lt;i class="fas fa-indent"&gt;&lt;/i&gt; Índice:
+
+.pull-left[
+### Mañana
+
+1. Introducción:
+  1. Twitter API
+  1. Información en un Tweet
+  1. Formato de un Tweet
+
+1. Stream API
+
+1. Rest API
+
+1. Problemas de muestreo
+
+1. Authentication / Identificación
+
+1. Twitter Streaming Data
+
+1. Twitter REST Data
+]
+
+--
+
+.pull-right[
+### Tarde
+
+1. Siguientes pasos:
+
+  1. Explorar los datos
+  1. Localizar quién tuitea
+  1. Clasificar las temáticas
+  1. Analizar los datos
+  
+1. Facebook
+1. Gephi
+]
+
+
+---
+
+# &lt;i class="fab fa-twitter"&gt;&lt;/i&gt; Twitter API  
+
+**API**: Application Programming Interface.
+
+&lt;u&gt;Existen dos métodos para acceder a los datos:&lt;/u&gt;
+
+--
+
+1. **Stream API**:
+
+  - Proporciona un flujo de tweets en tiempo real pueden filtarse por una serie de características, siendo las más habituales: palabras clave, usuarios y localizaciones.
+  - También puede obtenerse una muestra aleatoria (~1%).
+  - Limitaciones: Sólo en tiempo real.
+  - Paquetes: StreamR, rtweet, twitteR.
+
+--
+
+1. **REST API**: 
+
+  - Proporciona información sobre el perfil de usuarios, timeline, lista de usuarios y seguidores, etc.
+  - Limitaciones: 180.000 tweets cada 15 min sin limitación temporal. 
+  - Paquetes: rtweet, twitteR.
+  
+---
+
+# &lt;i class="fas fa-database"&gt;&lt;/i&gt; Información en un Tweet 
+
+&lt;blockquote class="twitter-tweet" data-lang="es"&gt;&lt;p lang="en" dir="ltr"&gt;Earlier this evening, President &lt;a href="https://twitter.com/realDonaldTrump?ref_src=twsrc%5Etfw"&gt;@realDonaldTrump&lt;/a&gt; treated the Clemson Tigers football team to dinner in the State Dining Room! &lt;a href="https://twitter.com/hashtag/ALLIN?src=hash&amp;amp;ref_src=twsrc%5Etfw"&gt;#ALLIN&lt;/a&gt; &lt;a href="https://t.co/P5JAo6yzfR"&gt;pic.twitter.com/P5JAo6yzfR&lt;/a&gt;&lt;/p&gt;&amp;mdash; The White House (@WhiteHouse) &lt;a href="https://twitter.com/WhiteHouse/status/1084988299041738752?ref_src=twsrc%5Etfw"&gt;15 de enero de 2019&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async src="https://platform.twitter.com/widgets.js" charset="utf-8"&gt;&lt;/script&gt;
+
+
+---
+layout: true
+
+# &lt;i class="fas fa-table"&gt;&lt;/i&gt; Formato Tweet
+
+---
+
+```
+Classes 'tbl_df', 'tbl' and 'data.frame':	100 obs. of  12 variables:
+ $ user_id             : chr  "822215673812119553" "822215673812119553" "822215673812119553" "822215673812119553" ...
+ $ status_id           : chr  "1085959561868132360" "1085951177353777153" "1085934431141978114" "1085917014705631232" ...
+ $ created_at          : POSIXct, format: "2019-01-17 17:58:30" "2019-01-17 17:25:11" ...
+ $ screen_name         : chr  "WhiteHouse" "WhiteHouse" "WhiteHouse" "WhiteHouse" ...
+ $ text                : chr  "Without a strong border, America is defenseless, vulnerable, and unprotected. https://t.co/ydVMU9jaVN" "The Federal Government remains shutdown because Congressional Democrats refuse to approve border security. http"| __truncated__ "President Trump Participates in the Missile Defense Review Announcement https://t.co/M1iQTTZ18b" "So funny to watch Schumer groveling. He called for the firing of bad cop James Comey many times - UNTIL I FIRED HIM!" ...
+ $ source              : chr  "Twitter Media Studio" "WH Digital" "Periscope" "WH Digital" ...
+ $ reply_to_status_id  : logi  NA NA NA NA NA NA ...
+ $ reply_to_user_id    : logi  NA NA NA NA NA NA ...
+ $ reply_to_screen_name: logi  NA NA NA NA NA NA ...
+ $ is_retweet          : logi  FALSE FALSE FALSE TRUE TRUE TRUE ...
+ $ favorite_count      : int  2468 3818 2714 0 0 0 8397 0 26983 0 ...
+ $ retweet_count       : int  865 1349 988 16842 24790 5206 3103 13009 6558 5298 ...
+```
+
+---
+
+## Variables obtenidas
+
+- **user_id:** ID del usuario.
+- **status_id:** ID del status o tweet.
+- **created_at:** Fecha de creación del tweet.
+- **screenName:** Nombre de pantalla del usuario.
+- **text:** Texto dentro del status o tweet.
+- **source:** Clase de dispositivo.
+- **reply_to_status_id:** ID del status al que responde.
+- **reply_to_user_id:** ID del usuario al que responde.
+- **reply_to_screen_name:** Nombre de pantalla al que responde.
+- **is_retweet:** TRUE si el status o tweet ha sido retwuiteado.
+- **favorite_count:** Número de veces el status o tweet ha sido marcado como favorito.
+- **retweet_count:** Número de veces el status o tweet ha sido retwuiteado.
+
+---
+layout: false
+class: inverse, center, middle
+
+# &lt;i class="fas fa-bullhorn"&gt;&lt;/i&gt; Stream API 
+
+---
+layout: true
+
+# &lt;i class="fas fa-bullhorn"&gt;&lt;/i&gt; Características Stream API
+
+---
+
+Documentación: [link](https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/connecting.html).
+
+--
+
+### Es la manera más recomendada para extraer la información: 
+  - 400 palabras clave
+  
+  - 5,000 id de usuarios 
+  
+  - 25 location boxes&lt;sup&gt;1&lt;/sup&gt;
+
+--
+
+### Problemas:
+
+  - Puede desconectarse con facilidad
+  
+  - Es recomendable guardar la información obtenida con regularidad
+  
+  - Programar script para reiniciarse cada hora
+
+.foot-note[
+[Location Boxes](https://boundingbox.klokantech.com/)
+]
+
+---
+layout: false
+class: inverse, center, middle
+
+# &lt;i class="fas fa-undo-alt"&gt;&lt;/i&gt; Rest API 
+
+---
+
+# &lt;i class="fas fa-undo-alt"&gt;&lt;/i&gt; Características Rest API
+
+Documentación: [link](https://developer.twitter.com/en/docs/tweets/post-and-engage/overview)
+
+### Es la manera de obtener mayor tipo de información:
+  - Timeline
+  
+  - Información del usuario
+  
+  - Lista de friends
+  
+  - Lista de followers
+  
+  
+### Problemas:
+  - Las cantidad de búsqueda está limitada
+  
+  - Retroceder en el tiempo es complicado
+
+---
+class: center, middle, inverse
+
+# &lt;i class="fab fa-creative-commons-sampling"&gt;&lt;/i&gt; Sampling bias?
+
+---
+layout: true
+
+# &lt;i class="fab fa-creative-commons-sampling"&gt;&lt;/i&gt; Sampling bias?
+
+---
+
+- **Morstatter, F., Pfeffer, J., Liu, H., &amp; Carley, K. M.** (2013). Is the Sample Good Enough? Comparing Data from Twitter’s Streaming API with Twitter’s Firehose. [Link](http://doi.org/10.1007/978-3-319-05579-4_10) 
+
+- **González-Bailón, S., Wang, N., Rivero, A., Borge-Holthoefer, J., &amp; Moreno, Y.** (2014). Assessing the bias in samples of large online networks. Social Networks. [Link](http://doi.org/10.1016/j.socnet.2014.01.004)
+
+- **Driscoll, K., &amp; Walker, S.** (2014). Working within a black box: Transparency in the collection and production of big twitter data. International Journal of Communication. [Link]( http://doi.org/10.1016/j.jaci.2003.08.001)
+
+- **Joseph, K., Landwehr, P. M., &amp; Carley, K. M.** (2014). Two 1%s Don’t make a whole: Comparing simultaneous samples from Twitter’s Streaming API. En Lecture Notes in Computer Science (including subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics). [Link](http://doi.org/10.1007/978-3-319-05579-4_10)
+
+- **Steinert-Threlkeld**, Z. (2018). Twitter as Data (Elements in Quantitative and Computational Methods for the Social Sciences). Cambridge: Cambridge University Press. doi:10.1017/9781108529327
+
+---
+
+### Consideraciones
+
+- La muestra aleatoria del 1% no es realmente aleatoria.
+
+- Los hashtags, usuarios, topics menos populares son menos probables de entrar en la muestra.
+
+- Para las búsquedas realizadas por keyword el sesgo no es tan importante.
+
+- Las muestras pequeñas obtenidas a través de un conjunto de hashtags pueden estar sesgadas.
+
+- Los datos obtenidos a través de la REST API están más sesgados que los obtenidos a través de la Streaming API.
+
+---
+layout: false
+class: inverse, center, middle
+
+# &lt;i class="far fa-id-card"&gt;&lt;/i&gt; Authentication/Identificación
+
+---
+# &lt;i class="far fa-id-card"&gt;&lt;/i&gt; Authentication/Identificación
+
+Para obtener el `token`:
+1. Ir a [developer.twitter.com/app](https://developer.twitter.com/app), identificarse con cuenta activa en Twitter.
+
+2. "Create New App": Es necesario tener un teléfono asociado a la cuenta de Twitter.
+
+3. Rellenar el nombre, descripción y sitio web, puede ser cualquier cosa.
+
+4. `Callback URL`: `http://127.0.0.1:1410`.
+
+4. Aceptar condiciones de usuario.
+
+5. Copiar `Keys and Access Tokens`, copiar `CONSUMER KEY` y `CONSUMER SECRET`.
+
+---
+class: inverse, center, middle
+
+# &lt;i class="fas fa-laptop-code"&gt;&lt;/i&gt; Twitter Streaming Data 
+
+---
+layout: true
+
+# &lt;i class="fas fa-laptop-code"&gt;&lt;/i&gt; Twitter Streaming Data
+
+---
+
+
+
+
+## `rtweet` package&lt;sup&gt;1&lt;/sup&gt;
+
+
+```r
+library(rtweet)
+
+token &lt;- create_token(
+  app = "rtweet_api",
+  consumer_key = "************************",
+  consumer_secret = "********************************",
+  access_token = "************************",
+  access_secret = "********************************"
+)
+```
+.footnote[
+[1] Kearney, M. W. (2018). rtweet: Collecting Twitter Data. R package version 0.6.7
+  Retrieved from https://cran.r-project.org/package=rtweet
+]
+
+---
+
+### Stream data collection
+
+```r
+stream_tweets(q = "", timeout = 30, file_name = "")
+```
+
+- `q`: Query usada para seleccionar y personalizar la búsqueda.
+  - `""`: Proporciona una muestra _aleatoria_.
+  - **keyword** y **user**: Si son varios separar por una coma.
+  - **location**: Usar coordenadas de rectángulo donde deben estar incluidos los tweets. .red[&lt;i class="fas fa-exclamation-triangle"&gt;&lt;/i&gt;]
+- `timeout`: Cantidad de tiempo en segundos para dejar la conexión abierta durante la captura de tweets. 
+
+- `file_name`: Nombre del archivo `.json`.
+
+
+```r
+stream_data &lt;- stream_tweets(q = "#earthquake", timeout = 90)
+```
+
+---
+
+
+
+
+```
+#&gt; Classes 'tbl_df', 'tbl' and 'data.frame':	8 obs. of  6 variables:
+#&gt;  $ user_id    : chr  "783511988236197888" "813652186303299584" "2263558999" "2538369181" ...
+#&gt;  $ created_at : POSIXct, format: "2019-01-16 18:09:55" "2019-01-16 18:09:58" ...
+#&gt;  $ screen_name: chr  "NatBien" "Katelayn_98" "gercarodoccom" "Murvel91" ...
+#&gt;  $ text       : chr  "Did you feel it? We did in #SanFrancisco. A 3.7 magnitude #earthquake centered near #Piedmont was felt from res"| __truncated__ "Good morning Bay Area #earthquake https://t.co/Y5RCjTK4I3" "Fox News confirmed it was not actually an earthquake in California.\n \n #Earthquake https://t.co/SIl4ojHNlo" "Good morning Bay Area #earthquake https://t.co/Y5RCjTK4I3" ...
+#&gt;  $ source     : chr  "Twitter Lite" "Twitter for iPhone" "Twitter Web Client" "Twitter Web Client" ...
+#&gt;  $ hashtags   :List of 8
+#&gt;   ..$ : chr  "SanFrancisco" "earthquake" "Piedmont"
+#&gt;   ..$ : chr "earthquake"
+#&gt;   ..$ : chr "Earthquake"
+#&gt;   ..$ : chr "earthquake"
+#&gt;   ..$ : chr  "GoesBetterWithCoffee" "whyIMarch" "womenswave" "womensrights" ...
+#&gt;   ..$ : chr  "earthquake" "Cobb"
+#&gt;   ..$ : chr "earthquake"
+#&gt;   ..$ : chr  "SanFrancisco" "earthquake" "Piedmont"
+```
+
+---
+class: inverse, center, middle
+layout: false
+
+# &lt;i class="fas fa-terminal"&gt;&lt;/i&gt;Twitter REST Data
+
+---
+layout: true
+
+# &lt;i class="fas fa-terminal"&gt;&lt;/i&gt;Twitter REST Data
+---
+
+### `rtweet` package&lt;sup&gt;1&lt;/sup&gt;
+
+
+```r
+library(rtweet)
+
+token &lt;- create_token(
+  app = "rtweet_api",
+  consumer_key = "************************",
+  consumer_secret = "********************************",
+  access_token = "************************",
+  access_secret = "********************************"
+)
+```
+.footnote[
+[1] Kearney, M. W. (2018). rtweet: Collecting Twitter Data. R package version 0.6.7
+  Retrieved from https://cran.r-project.org/package=rtweet
+]
+
+---
+
+### Búsqueda por palabras clave
+
+```r
+rt &lt;- search_tweets(q = "", n = 26000, include_rts = FALSE)
+```
+
+- `q`: Query to be searched.
+
+- `n`: Integer, specifying the total number of desired tweets to return. 
+
+- `include_rts`: Logical, indicating whether to include retweets in search results. 
+
+
+```r
+rt &lt;- search_tweets(q = "#Vox", n = 26000, include_rts = FALSE)
+```
+
+---
+
+
+```
+#&gt; Classes 'tbl_df', 'tbl' and 'data.frame':	8751 obs. of  88 variables:
+#&gt;  $ user_id                : chr  "239737622" "1250095825" "704928207" "704928207" ...
+#&gt;  $ status_id              : chr  "1085825260925186048" "1085824595528015872" "1085823465846857728" "1082634334958505984" ...
+#&gt;  $ created_at             : POSIXct, format: "2019-01-17 09:04:50" "2019-01-17 09:02:11" ...
+#&gt;  $ screen_name            : chr  "michetin" "bruselensewp" "mar_feliciano" "mar_feliciano" ...
+#&gt;  $ text                   : chr  "Violencia extrema en un pleno en el Ayuntamiento de Jaén....imagenes impactantes de como un militante de #Vox a"| __truncated__ "#FarLeft parties and leaders in #Spain fuel #HateSpeech inciting to violence against new party #Vox and its lea"| __truncated__ "@Teresamaroto3 @CiudadanosCs @eslamananadeFJL @okdiario @elespanolcom Para mayo, #Vox superará en votos y escañ"| __truncated__ "@TeoGarciaEgea @LuisSalom @PPopular #Vox por dignidad no debe apoyar vuestro pacto.\nSois tan apesebrados como "| __truncated__ ...
+#&gt;  $ source                 : chr  "Twitter for iPhone" "Twitter Web Client" "Twitter for Android" "Twitter for Android" ...
+#&gt;  $ display_text_width     : num  261 277 268 127 161 88 177 142 262 275 ...
+#&gt;  $ reply_to_status_id     : chr  NA NA "1085820351681097729" "1082633222041808896" ...
+#&gt;  $ reply_to_user_id       : chr  NA NA "705476900936949761" "224074203" ...
+#&gt;  $ reply_to_screen_name   : chr  NA NA "Teresamaroto3" "TeoGarciaEgea" ...
+#&gt;  $ is_quote               : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+#&gt;  $ is_retweet             : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+#&gt;  $ favorite_count         : int  0 0 0 0 0 2 0 0 8 5 ...
+#&gt;  $ retweet_count          : int  0 0 0 0 0 1 0 0 10 4 ...
+#&gt;  $ hashtags               :List of 8751
+#&gt;   ..$ : chr  "Vox" "podemos"
+#&gt;   ..$ : chr  "FarLeft" "Spain" "HateSpeech" "Vox"
+#&gt;   ..$ : chr  "Vox" "VoxUnicaOposicion" "EspañaUnaySoberana" "VERDE"
+#&gt;   ..$ : chr  "Vox" "NuevasElecciones" "VoxExtremaNecesidad"
+#&gt;   ..$ : chr  "vox" "VoxExtremaNecesidad"
+#&gt;   ..$ : chr  "Vox" "VoxNoPuedeApoyarACiudadanos"
+#&gt;   ..$ : chr  "LaSoberbiaNaranja" "Vox" "CiudadanosDaAsco" "VoxExtremaNecesidad"
+#&gt;   ..$ : chr  "Vox" "Madiba"
+#&gt;   ..$ : chr  "ComienzaElCambio" "Andalucía" "VoxCsPP" "VOX" ...
+#&gt;   ..$ : chr  "FelizMiércoles" "feminista" "Feminazis" "PSOE" ...
+#&gt;   ..$ : chr  "PSOE" "EleccionesGeneralesYa" "España" "EspañaViva" ...
+#&gt;   ..$ : chr  "Tabarnia" "JuanmaPresidente" "InvestiduraAND" "SanchezDimision" ...
+#&gt;   ..$ : chr  "JuanmaPresidente" "InvestiduraAND" "Feminazis" "feminista" ...
+#&gt;   ..$ : chr  "PSOE" "NiUnPasoAtras" "parlamentoandaluz" "Andalucía" ...
+#&gt;   ..$ : chr "Vox"
+#&gt;   ..$ : chr  "AlzaLaVoxARV" "VOX"
+#&gt;   ..$ : chr  "CambioAndaluzAR" "vox"
+#&gt;   ..$ : chr "VOX"
+#&gt;   ..$ : chr "VOX"
+#&gt;   ..$ : chr  "cafécarmencalvo" "PSOE" "Vox"
+#&gt;   ..$ : chr  "PPyVoxAR" "vox"
+#&gt;   ..$ : chr "VOX"
+#&gt;   ..$ : chr "VOX"
+#&gt;   ..$ : chr "VOX"
+#&gt;   ..$ : chr "vox"
+#&gt;   ..$ : chr "vox"
+#&gt;   ..$ : chr "vox"
+#&gt;   ..$ : chr "vox"
+#&gt;   ..$ : chr "vox"
+#&gt;   ..$ : chr "Vox"
+#&gt;   ..$ : chr "Vox"
+#&gt;   ..$ : chr "vox"
+#&gt;   ..$ : chr "vox"
+#&gt;   ..$ : chr "vox"
+#&gt;   ..$ : chr "Vox"
+#&gt;   ..$ : chr "vox"
+#&gt;   ..$ : chr  "vox" "psoe" "podemos"
+#&gt;   ..$ : chr "vox"
+#&gt;   ..$ : chr "vox"
+#&gt;   ..$ : chr "vox"
+#&gt;   ..$ : chr "vox"
+#&gt;   ..$ : chr "vox"
+#&gt;   ..$ : chr "VOX"
+#&gt;   ..$ : chr  "Vox" "impuestos"
+#&gt;   ..$ : chr  "Vox" "PP" "Abascal"
+#&gt;   ..$ : chr  "rentas" "Vox"
+#&gt;   ..$ : chr  "Vox" "inmigrantes"
+#&gt;   ..$ : chr  "2D" "Andalucía" "Vox"
+#&gt;   ..$ : chr  "PP" "Vox" "PP" "Cs"
+#&gt;   ..$ : chr  "Vox" "PP"
+#&gt;   ..$ : chr "Vox"
+#&gt;   ..$ : chr "Vox"
+#&gt;   ..$ : chr  "PP" "Moreno" "Andalucía" "Cs" ...
+#&gt;   ..$ : chr  "Vox" "elecciones"
+#&gt;   ..$ : chr  "feministas" "PP" "Cs" "Vox" ...
+#&gt;   ..$ : chr  "Vox" "Constitución"
+#&gt;   ..$ : chr  "impuestos" "Vox" "EstadodeBienestar"
+#&gt;   ..$ : chr "Vox"
+#&gt;   ..$ : chr  "Vox" "PP"
+#&gt;   ..$ : chr  "Vox" "donaciones"
+#&gt;   ..$ : chr  "VOX" "Castelldefels" "AlcemNos" "Antifeixisme" ...
+#&gt;   ..$ : chr  "Elcascabel16E" "Tabarnia" "Mvt" "LaMañanaTVE" ...
+#&gt;   ..$ : chr  "ZPedro" "Vox" "AndaluciaPorEspana" "Elcascabel11E" ...
+#&gt;   ..$ : chr  "AndaluciaPorEspana" "Elcascabel14E" "Tabarnia" "Mvt" ...
+#&gt;   ..$ : chr  "PP" "Elcascabel9E" "Tabarnia" "LaMañanaTVE" ...
+#&gt;   ..$ : chr  "ShadowBanned" "shadowban" "ViolenciaDeGenero" "Elcascabel16E" ...
+#&gt;   ..$ : chr  "AndaluciaPorEspana" "Elcascabel17E" "Tabarnia" "LaMañanaTVE" ...
+#&gt;   ..$ : chr  "Elcascabel15E" "Tabarnia" "Mvt" "LaMañanaTVE" ...
+#&gt;   ..$ : chr  "ZPedro" "Elcascabel8E" "Tabarnia" "LaMañanaTVE" ...
+#&gt;   ..$ : chr  "PdCAT" "PP" "Vox" "AndaluciaPorEspana" ...
+#&gt;   ..$ : chr  "PP" "Vox" "Elcascabel14E" "Tabarnia" ...
+#&gt;   ..$ : chr  "Elcascabel8E" "Gato_Directo" "Tabarnia" "LaMañanaTVE" ...
+#&gt;   ..$ : chr  "ViolenciaDeGenero" "Elcascabel15E" "Tabarnia" "Mvt" ...
+#&gt;   ..$ : chr  "ZP" "ZPedro" "Elcascabel11E" "Tabarnia" ...
+#&gt;   ..$ : chr  "Vox" "PP" "Cs" "AndaluciaPorEspana" ...
+#&gt;   ..$ : chr  "ZP" "Andalucia" "Elcascabel14E" "Tabarnia" ...
+#&gt;   ..$ : chr  "PP" "Cs" "Psoe" "Andalucia" ...
+#&gt;   ..$ : chr  "Elcascabel14E" "Tabarnia" "LaMañanaTVE" "LaNoche24h" ...
+#&gt;   ..$ : chr  "AndaluciaPorEspana" "Elcascabel15E" "Tabarnia" "LaMañanaTVE" ...
+#&gt;   ..$ : chr  "AndaluciaPorEspana" "Elcascabel9E" "Tabarnia" "LaMañanaTVE" ...
+#&gt;   ..$ : chr  "ZPedro" "PGE2019" "ZP" "Elcascabel14E" ...
+#&gt;   ..$ : chr  "AndaluciaPorEspana" "Elcascabel15E" "Tabarnia" "Mvt" ...
+#&gt;   ..$ : chr  "Elcascabel17E" "Tabarnia" "Mvt" "LaMañanaTVE" ...
+#&gt;   ..$ : chr  "Elcascabel17E" "Tabarnia" "Mvt" "LaMañanaTVE" ...
+#&gt;   ..$ : chr  "ZPedro" "AndaluciaPorEspana" "Elcascabel14E" "Tabarnia" ...
+#&gt;   ..$ : chr  "Elcascabel17E" "Tabarnia" "Mvt" "LaMañanaTVE" ...
+#&gt;   ..$ : chr  "Psoe" "Andalucia" "Elcascabel14E" "Tabarnia" ...
+#&gt;   ..$ : chr  "AndaluciaPorEspana" "Elcascabel16E" "Tabarnia" "LaMañanaTVE" ...
+#&gt;   ..$ : chr  "Elcascabel14E" "Tabarnia" "LaMañanaTVE" "LaNoche24h" ...
+#&gt;   ..$ : chr  "Elcascabel15E" "Tabarnia" "Mvt" "LaMañanaTVE" ...
+#&gt;   ..$ : chr  "Elcascabel11E" "Tabarnia" "LaMañanaTVE" "LaNoche24h" ...
+#&gt;   ..$ : chr  "Elcascabel17E" "Tabarnia" "LaMañanaTVE" "LaNoche24h" ...
+#&gt;   ..$ : chr  "Podemos" "JxCAT" "PdCAT" "ERC" ...
+#&gt;   ..$ : chr  "15M" "Antifascista" "Elcascabel8E" "Gato_Directo" ...
+#&gt;   ..$ : chr  "Andalucia" "Elcascabel14E" "Tabarnia" "Mvt" ...
+#&gt;   ..$ : chr  "Psoe" "Cs" "ZPedro" "Andalucia" ...
+#&gt;   ..$ : chr  "Andalucia" "Elcascabel9E" "Tabarnia" "LaMañanaTVE" ...
+#&gt;   ..$ : chr  "ZP" "Andalucia" "Elcascabel14E" "Tabarnia" ...
+#&gt;   ..$ : chr  "ZP" "ZPedro" "Elcascabel9E" "Tabarnia" ...
+#&gt;   .. [list output truncated]
+#&gt;  $ symbols                :List of 8751
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   .. [list output truncated]
+#&gt;  $ urls_url               :List of 8751
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "infolibre.es/noticias/polit…"
+#&gt;   ..$ : chr "infolibre.es/noticias/polit…"
+#&gt;   ..$ : chr "twitter.com/_infolibre/sta…"
+#&gt;   ..$ : chr "twitter.com/_infolibre/sta…"
+#&gt;   ..$ : chr "twitter.com/_infoLibre/sta…"
+#&gt;   ..$ : chr  "cdn27.hiberus.com/uploads/docume…" "cdn27.hiberus.com/uploads/docume…"
+#&gt;   ..$ : chr "twitter.com/_infolibre/sta…"
+#&gt;   ..$ : chr "twitter.com/_infolibre/sta…"
+#&gt;   ..$ : chr "infolibre.es/noticias/polit…"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "infolibre.es/noticias/polit…"
+#&gt;   ..$ : chr "twitter.com/_infoLibre/sta…"
+#&gt;   ..$ : chr "twitter.com/_infolibre/sta…"
+#&gt;   ..$ : chr "twitter.com/_infoLibre/sta…"
+#&gt;   ..$ : chr "infolibre.es/noticias/polit…"
+#&gt;   ..$ : chr "twitter.com/_infoLibre/sta…"
+#&gt;   ..$ : chr "twitter.com/_infolibre/sta…"
+#&gt;   ..$ : chr "twitter.com/arrankstf/stat…"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "twitter.com/SergiVidal215/…"
+#&gt;   ..$ : chr "twitter.com/pitufoprincipe…"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "casoaislado.com/cataluna-dara-…"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "twitter.com/GPPopular/stat…"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "twitter.com/PPopular/statu…"
+#&gt;   ..$ : chr "twitter.com/sanchezcastejo…"
+#&gt;   ..$ : chr "twitter.com/gregoriohs68/s…"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "twitter.com/MariaJamardoC/…"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "twitter.com/jgpast/status/…"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "twitter.com/epesimo/status…"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "twitter.com/epesimo/status…"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   .. [list output truncated]
+#&gt;  $ urls_t.co              :List of 8751
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/zHJdFnJYAI"
+#&gt;   ..$ : chr "https://t.co/6Pl3F8NvS5"
+#&gt;   ..$ : chr "https://t.co/cLp2I13yv9"
+#&gt;   ..$ : chr "https://t.co/7rXfGhTZuw"
+#&gt;   ..$ : chr "https://t.co/ezEcyY14Ho"
+#&gt;   ..$ : chr  "https://t.co/dJjdEtWfAG" "https://t.co/8ZWJTypso8"
+#&gt;   ..$ : chr "https://t.co/GVeEQoqBcV"
+#&gt;   ..$ : chr "https://t.co/Ziemfs7auz"
+#&gt;   ..$ : chr "https://t.co/ALRkKUmmdl"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/dPoo9NtOAa"
+#&gt;   ..$ : chr "https://t.co/qDk6HAnIF9"
+#&gt;   ..$ : chr "https://t.co/mRfna4tiPt"
+#&gt;   ..$ : chr "https://t.co/z59njbFhKO"
+#&gt;   ..$ : chr "https://t.co/knXBemIXGz"
+#&gt;   ..$ : chr "https://t.co/znnlNdV9ge"
+#&gt;   ..$ : chr "https://t.co/wVY9iq8WIA"
+#&gt;   ..$ : chr "https://t.co/Y9RoN60QjW"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/3TM4SvqHjD"
+#&gt;   ..$ : chr "https://t.co/UuXpeR2Mnv"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/QhbLGKfKEQ"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/ioZwtt0q3w"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/jLXJlhMz05"
+#&gt;   ..$ : chr "https://t.co/dsNlqWy0K1"
+#&gt;   ..$ : chr "https://t.co/F7WPpiiDYA"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/0U7qwhVUn3"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/7hgKVx76co"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/ihA2ZfP2nL"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/cW01XggsCc"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   .. [list output truncated]
+#&gt;  $ urls_expanded_url      :List of 8751
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://www.infolibre.es/noticias/politica/2019/01/08/las_propuestas_economicas_vox_90502_1012.html"
+#&gt;   ..$ : chr "https://www.infolibre.es/noticias/politica/2019/01/10/abascal_oculto_asamblea_madrid_que_destinaba_170_000_euro"| __truncated__
+#&gt;   ..$ : chr "https://twitter.com/_infolibre/status/1082539970001358849"
+#&gt;   ..$ : chr "https://twitter.com/_infolibre/status/1083040054191276033"
+#&gt;   ..$ : chr "https://twitter.com/_infoLibre/status/1083051000863313920"
+#&gt;   ..$ : chr  "https://cdn27.hiberus.com/uploads/documentos/2019/01/09/_acuerdoppyvox9219_c19d2bf3.pdf" "https://cdn27.hiberus.com/uploads/documentos/2019/01/09/_cien_07cad9b9.pdf"
+#&gt;   ..$ : chr "https://twitter.com/_infolibre/status/1085803937360277505"
+#&gt;   ..$ : chr "https://twitter.com/_infolibre/status/1085076681994452992"
+#&gt;   ..$ : chr "https://www.infolibre.es/noticias/politica/2019/01/09/el_chiringuito_publico_que_ignacio_gonzalez_coloco_santia"| __truncated__
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://www.infolibre.es/noticias/politica/2019/01/15/vox_inventa_que_tribunal_cuentas_fiscalizo_declaro_legale"| __truncated__
+#&gt;   ..$ : chr "https://twitter.com/_infoLibre/status/1083291137329324032"
+#&gt;   ..$ : chr "https://twitter.com/_infolibre/status/1082917463464075265"
+#&gt;   ..$ : chr "https://twitter.com/_infoLibre/status/1084729405635813376"
+#&gt;   ..$ : chr "https://www.infolibre.es/noticias/politica/2019/01/16/la_ocultacion_datos_por_parte_vox_impide_saber_si_las_don"| __truncated__
+#&gt;   ..$ : chr "https://twitter.com/_infoLibre/status/1082902354809290752"
+#&gt;   ..$ : chr "https://twitter.com/_infolibre/status/1085436510667788289"
+#&gt;   ..$ : chr "https://twitter.com/arrankstf/status/1085797826930638849"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/SergiVidal215/status/1083614129531875328"
+#&gt;   ..$ : chr "https://twitter.com/pitufoprincipe/status/1084929851813974017"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://casoaislado.com/cataluna-dara-hasta-14-292e-al-ano-a-cada-familia-de-inmigrantes-ilegales-sin-exigirles"| __truncated__
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/GPPopular/status/1083485157162708992"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/PPopular/status/1084474846870933505"
+#&gt;   ..$ : chr "https://twitter.com/sanchezcastejon/status/1085261209530757120"
+#&gt;   ..$ : chr "https://twitter.com/gregoriohs68/status/1083111408370438158"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/MariaJamardoC/status/1085066486719397889"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/jgpast/status/1084186979372359680"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1085610575240015872"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083640007032795136"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   .. [list output truncated]
+#&gt;  $ media_url              :List of 8751
+#&gt;   ..$ : chr "http://pbs.twimg.com/ext_tw_video_thumb/1085825048974245888/pu/img/BDpgtAV_HL8SVyHC.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DxGce0sUUAA2CnC.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DxGeD_hUUAAhnws.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DwlMCxYWoAENwhE.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DxGctEhXcAAd5uK.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dw-mvayXQAANACh.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DxGcNSuXgAAHKJd.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DxGbw49VYAA8_RW.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dw-mOUPWkAAAcnE.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DwVasmeX0AAmSGw.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DwfQfvVWsAADeUX.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dwa_99WW0AACXwh.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dw507wRW0AUYLDH.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dw-_afRX0Ag7MoO.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/Dw_Vrd8W0AAD2X2.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DwgBCRoWkAAUy9Q.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DxGV6kXW0AAPWHO.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/ext_tw_video_thumb/1082727154679513089/pu/img/9UrmTxzLCTlEA5Gh.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DwlKm9mWwAAxcs-.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DwqsxzjXcAI-NtU.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DwWBwk3XgAEqNbI.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dw_DcoUXgAU_SSI.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/Dwqvg3tWwAEHOEf.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dwnc1XjXcAA7nbM.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DwrRJlxW0AEGnba.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DxEa8GDX4AIsAEE.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DxEbNPkWkAAgugP.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dw6W4M_WsAAgaa7.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DxEZ2iwWsAIJ-1E.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DwqwFrtX0AEdt15.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DxDcaaEX4AYRDQv.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/Dw6QwUGXgAEp0Cf.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DwlpDAnWkAAJnen.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dwp-rcjWsAUXHw_.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DwWCzbhW0AAHgMH.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/Dwv1EwnXgAAyqxb.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DwfRmkNWwAE2K8k.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DwvzyZRWkAA_kh1.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DwbVLS6WsAERvqQ.jpg"
+#&gt;   .. [list output truncated]
+#&gt;  $ media_t.co             :List of 8751
+#&gt;   ..$ : chr "https://t.co/KtQF1tf0Js"
+#&gt;   ..$ : chr "https://t.co/SkTvUMZqUo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/9GHk44X7n0"
+#&gt;   ..$ : chr "https://t.co/CG1myTNgBH"
+#&gt;   ..$ : chr "https://t.co/I2ZBfS8ag0"
+#&gt;   ..$ : chr "https://t.co/V2TdUEclNx"
+#&gt;   ..$ : chr "https://t.co/KZ1ifU8XuT"
+#&gt;   ..$ : chr "https://t.co/NoG45kVbJE"
+#&gt;   ..$ : chr "https://t.co/6bMGFu3o4z"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/GFGTEpQn56"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/FeU7miRWB7"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/92dVBHxnB2"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/TMwumLO298"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/WjsYR4rcQf"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/NNHyNWwGN8"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/1FBqo7wP1i"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/RpYBkMyj5n"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/ipRFrIzlMt"
+#&gt;   ..$ : chr "https://t.co/U8XcgQJ5lK"
+#&gt;   ..$ : chr "https://t.co/igcpjP34za"
+#&gt;   ..$ : chr "https://t.co/VXa56VZcn4"
+#&gt;   ..$ : chr "https://t.co/srjnHK4YcQ"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/b7TYL8hqdq"
+#&gt;   ..$ : chr "https://t.co/FuSf0UJUp6"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/K2L0d99MGU"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/4NBkiWEXqD"
+#&gt;   ..$ : chr "https://t.co/P2Bx6d6qU7"
+#&gt;   ..$ : chr "https://t.co/UP8hExp51w"
+#&gt;   ..$ : chr "https://t.co/IOmjmFPQP9"
+#&gt;   ..$ : chr "https://t.co/WCaphD8JfA"
+#&gt;   ..$ : chr "https://t.co/fRoCM43rtD"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/DmYqya5u5E"
+#&gt;   ..$ : chr "https://t.co/wYJr7V5Q54"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/zXvgsUuNiK"
+#&gt;   ..$ : chr "https://t.co/A16rhEVWk9"
+#&gt;   ..$ : chr "https://t.co/g7FkKeIjRc"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/HGxAMxtLRJ"
+#&gt;   ..$ : chr "https://t.co/qJmHnQ4SGk"
+#&gt;   ..$ : chr "https://t.co/MYtvoG0OLf"
+#&gt;   .. [list output truncated]
+#&gt;  $ media_expanded_url     :List of 8751
+#&gt;   ..$ : chr "https://twitter.com/michetin/status/1085825260925186048/video/1"
+#&gt;   ..$ : chr "https://twitter.com/bruselensewp/status/1085824595528015872/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/The_barria/status/1085822781772779520/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/Hermi35939249/status/1083480805563871233/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/Hermi35939249/status/1085821290294976513/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/Hermi35939249/status/1085269377417658370/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/Hermi35939249/status/1085820745769467907/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/Hermi35939249/status/1085820260882628608/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/Hermi35939249/status/1085268806359044103/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/jesusmarana/status/1082371014003175424/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/jesusmarana/status/1083063485276348417/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/jesusmarana/status/1082763838154571776/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/jesusmarana/status/1084933152227893248/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/jesusmarana/status/1085296505328680961/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1085325678860476416/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083116861468954625/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1085813832054960129/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1082727185864163329/video/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083479230246207488/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083868700116164608/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1082419762737696768/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1085300973973749760/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083875145381494784/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083640007032795136/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083909923170369536/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1085679542960877569/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1085679541073469441/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1084971043134021632/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1085679537407606786/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083875147512188929/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1085610575240015872/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1084966216316407808/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083516085087993857/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083817948790308864/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1082419765128454144/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1084232833844027392/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083064722851840000/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1084232830832574464/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1082788466461691905/photo/1"
+#&gt;   .. [list output truncated]
+#&gt;  $ media_type             :List of 8751
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   ..$ : chr "photo"
+#&gt;   .. [list output truncated]
+#&gt;  $ ext_media_url          :List of 8751
+#&gt;   ..$ : chr "http://pbs.twimg.com/ext_tw_video_thumb/1085825048974245888/pu/img/BDpgtAV_HL8SVyHC.jpg"
+#&gt;   ..$ : chr  "http://pbs.twimg.com/media/DxGce0sUUAA2CnC.jpg" "http://pbs.twimg.com/media/DxGd878X0AERNnA.jpg" "http://pbs.twimg.com/media/DxGeVk0U8AY-WjM.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DxGeD_hUUAAhnws.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DwlMCxYWoAENwhE.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DxGctEhXcAAd5uK.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dw-mvayXQAANACh.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DxGcNSuXgAAHKJd.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DxGbw49VYAA8_RW.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dw-mOUPWkAAAcnE.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DwVasmeX0AAmSGw.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "http://pbs.twimg.com/media/DwfQfvVWsAADeUX.jpg" "http://pbs.twimg.com/media/DwfQfvTX0AYYMBq.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dwa_99WW0AACXwh.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dw507wRW0AUYLDH.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dw-_afRX0Ag7MoO.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/Dw_Vrd8W0AAD2X2.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DwgBCRoWkAAUy9Q.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DxGV6kXW0AAPWHO.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/ext_tw_video_thumb/1082727154679513089/pu/img/9UrmTxzLCTlEA5Gh.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/DwlKm9mWwAAxcs-.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DwqsxzjXcAI-NtU.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DwWBwk3XgAEqNbI.jpg"
+#&gt;   ..$ : chr  "http://pbs.twimg.com/media/Dw_DcoUXgAU_SSI.jpg" "http://pbs.twimg.com/media/Dw_DdxoW0AEQElj.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/Dwqvg3tWwAEHOEf.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dwnc1XjXcAA7nbM.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DwrRJlxW0AEGnba.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DxEa8GDX4AIsAEE.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DxEbNPkWkAAgugP.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dw6W4M_WsAAgaa7.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DxEZ2iwWsAIJ-1E.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DwqwFrtX0AEdt15.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DxDcaaEX4AYRDQv.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/Dw6QwUGXgAEp0Cf.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DwlpDAnWkAAJnen.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "http://pbs.twimg.com/media/Dwp-rcjWsAUXHw_.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DwWCzbhW0AAHgMH.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/Dwv1EwnXgAAyqxb.jpg"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "http://pbs.twimg.com/media/DwfRmkNWwAE2K8k.jpg" "http://pbs.twimg.com/media/DwfRnW_WsAEiUaC.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DwvzyZRWkAA_kh1.jpg"
+#&gt;   ..$ : chr "http://pbs.twimg.com/tweet_video_thumb/DwbVLS6WsAERvqQ.jpg"
+#&gt;   .. [list output truncated]
+#&gt;  $ ext_media_t.co         :List of 8751
+#&gt;   ..$ : chr "https://t.co/KtQF1tf0Js"
+#&gt;   ..$ : chr  "https://t.co/SkTvUMZqUo" "https://t.co/SkTvUMZqUo" "https://t.co/SkTvUMZqUo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/9GHk44X7n0"
+#&gt;   ..$ : chr "https://t.co/CG1myTNgBH"
+#&gt;   ..$ : chr "https://t.co/I2ZBfS8ag0"
+#&gt;   ..$ : chr "https://t.co/V2TdUEclNx"
+#&gt;   ..$ : chr "https://t.co/KZ1ifU8XuT"
+#&gt;   ..$ : chr "https://t.co/NoG45kVbJE"
+#&gt;   ..$ : chr "https://t.co/6bMGFu3o4z"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/GFGTEpQn56"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "https://t.co/FeU7miRWB7" "https://t.co/FeU7miRWB7"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/92dVBHxnB2"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/TMwumLO298"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/WjsYR4rcQf"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/NNHyNWwGN8"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/1FBqo7wP1i"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/RpYBkMyj5n"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/ipRFrIzlMt"
+#&gt;   ..$ : chr "https://t.co/U8XcgQJ5lK"
+#&gt;   ..$ : chr "https://t.co/igcpjP34za"
+#&gt;   ..$ : chr "https://t.co/VXa56VZcn4"
+#&gt;   ..$ : chr  "https://t.co/srjnHK4YcQ" "https://t.co/srjnHK4YcQ"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/b7TYL8hqdq"
+#&gt;   ..$ : chr "https://t.co/FuSf0UJUp6"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/K2L0d99MGU"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/4NBkiWEXqD"
+#&gt;   ..$ : chr "https://t.co/P2Bx6d6qU7"
+#&gt;   ..$ : chr "https://t.co/UP8hExp51w"
+#&gt;   ..$ : chr "https://t.co/IOmjmFPQP9"
+#&gt;   ..$ : chr "https://t.co/WCaphD8JfA"
+#&gt;   ..$ : chr "https://t.co/fRoCM43rtD"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/DmYqya5u5E"
+#&gt;   ..$ : chr "https://t.co/wYJr7V5Q54"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://t.co/zXvgsUuNiK"
+#&gt;   ..$ : chr "https://t.co/A16rhEVWk9"
+#&gt;   ..$ : chr "https://t.co/g7FkKeIjRc"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "https://t.co/HGxAMxtLRJ" "https://t.co/HGxAMxtLRJ"
+#&gt;   ..$ : chr "https://t.co/qJmHnQ4SGk"
+#&gt;   ..$ : chr "https://t.co/MYtvoG0OLf"
+#&gt;   .. [list output truncated]
+#&gt;  $ ext_media_expanded_url :List of 8751
+#&gt;   ..$ : chr "https://twitter.com/michetin/status/1085825260925186048/video/1"
+#&gt;   ..$ : chr  "https://twitter.com/bruselensewp/status/1085824595528015872/photo/1" "https://twitter.com/bruselensewp/status/1085824595528015872/photo/1" "https://twitter.com/bruselensewp/status/1085824595528015872/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/The_barria/status/1085822781772779520/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/Hermi35939249/status/1083480805563871233/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/Hermi35939249/status/1085821290294976513/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/Hermi35939249/status/1085269377417658370/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/Hermi35939249/status/1085820745769467907/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/Hermi35939249/status/1085820260882628608/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/Hermi35939249/status/1085268806359044103/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/jesusmarana/status/1082371014003175424/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "https://twitter.com/jesusmarana/status/1083063485276348417/photo/1" "https://twitter.com/jesusmarana/status/1083063485276348417/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/jesusmarana/status/1082763838154571776/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/jesusmarana/status/1084933152227893248/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/jesusmarana/status/1085296505328680961/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1085325678860476416/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083116861468954625/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1085813832054960129/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1082727185864163329/video/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083479230246207488/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083868700116164608/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1082419762737696768/photo/1"
+#&gt;   ..$ : chr  "https://twitter.com/epesimo/status/1085300973973749760/photo/1" "https://twitter.com/epesimo/status/1085300973973749760/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083875145381494784/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083640007032795136/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083909923170369536/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1085679542960877569/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1085679541073469441/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1084971043134021632/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1085679537407606786/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083875147512188929/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1085610575240015872/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1084966216316407808/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083516085087993857/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1083817948790308864/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1082419765128454144/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1084232833844027392/photo/1"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "https://twitter.com/epesimo/status/1083064722851840000/photo/1" "https://twitter.com/epesimo/status/1083064722851840000/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1084232830832574464/photo/1"
+#&gt;   ..$ : chr "https://twitter.com/epesimo/status/1082788466461691905/photo/1"
+#&gt;   .. [list output truncated]
+#&gt;  $ ext_media_type         : chr  NA NA NA NA ...
+#&gt;  $ mentions_user_id       :List of 8751
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "260788584" "169426475" "375146901" "461919971" ...
+#&gt;   ..$ : chr  "705476900936949761" "19028805" "467205641" "3439292716" ...
+#&gt;   ..$ : chr  "224074203" "103279981" "20509689"
+#&gt;   ..$ : chr  "224371808" "905857526"
+#&gt;   ..$ : chr "224074203"
+#&gt;   ..$ : chr  "380279739" "509944052"
+#&gt;   ..$ : chr  "737770900469190657" "791198196"
+#&gt;   ..$ : chr  "902487847436943360" "802166343676133376" "2908946849" "4253118491" ...
+#&gt;   ..$ : chr  "2867923132" "1226025062" "943549571908689921" "4253118491" ...
+#&gt;   ..$ : chr  "568156221" "3631201828" "1353752610" "2478698951" ...
+#&gt;   ..$ : chr  "279613612" "1336580959" "2908946849" "3631201828" ...
+#&gt;   ..$ : chr  "2908946849" "1008334695816417280" "433580758" "127612813" ...
+#&gt;   ..$ : chr  "127612813" "1226025062" "1353752610" "804459782723796993" ...
+#&gt;   ..$ : chr "14436030"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "79982342" "3511961" "2362874756"
+#&gt;   ..$ : chr "25555639"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "4479679403" "1078033791971741720" "68740712" "50982086"
+#&gt;   ..$ : chr  "244101525" "1078033791971741720"
+#&gt;   ..$ : chr "87659574"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "581763309" "317842100" "278955879"
+#&gt;   ..$ : chr "68740712"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "781848290123972608" "305082200" "241993704" "2683158508" ...
+#&gt;   ..$ : chr  "3042475449" "2201623465"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "1039552462879907842" "907326476101484544" "2201623465"
+#&gt;   ..$ : chr "910771786589130752"
+#&gt;   ..$ : chr "603884167"
+#&gt;   ..$ : chr  "237413314" "67682384" "603884167"
+#&gt;   ..$ : chr "392580114"
+#&gt;   ..$ : chr "204060294"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "209754467"
+#&gt;   ..$ : chr "410361696"
+#&gt;   ..$ : chr "603884167"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "603884167"
+#&gt;   ..$ : chr "345642130"
+#&gt;   ..$ : chr "204060294"
+#&gt;   ..$ : chr "392580114"
+#&gt;   ..$ : chr "603884167"
+#&gt;   ..$ : chr "67682384"
+#&gt;   ..$ : chr "410361696"
+#&gt;   ..$ : chr "973306878024351744"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "523386042"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "352930189"
+#&gt;   ..$ : chr "910602345297465345"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "39321874"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "910602345297465345"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "3042734343"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "68740712"
+#&gt;   .. [list output truncated]
+#&gt;  $ mentions_screen_name   :List of 8751
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "Santi_ABASCAL" "JunckerEU" "donaldtusk" "EU_Justice" ...
+#&gt;   ..$ : chr  "Teresamaroto3" "CiudadanosCs" "eslamananadeFJL" "okdiario" ...
+#&gt;   ..$ : chr  "TeoGarciaEgea" "LuisSalom" "PPopular"
+#&gt;   ..$ : chr  "toniroldanm" "VeroticaSoler"
+#&gt;   ..$ : chr "TeoGarciaEgea"
+#&gt;   ..$ : chr  "IsaacParejo" "Cristi_latin"
+#&gt;   ..$ : chr  "elrancius" "IgnatiusFarray"
+#&gt;   ..$ : chr  "BarreirAurora" "PMajeton" "Cordobesainfliz" "AngelesRendn1" ...
+#&gt;   ..$ : chr  "pbustos77" "maribelbotoah" "Sufridor361" "AngelesRendn1" ...
+#&gt;   ..$ : chr  "softlittleass" "21_luky" "lamoscacojondra" "KikeMlaga" ...
+#&gt;   ..$ : chr  "mgicafe" "Luka63" "Cordobesainfliz" "21_luky" ...
+#&gt;   ..$ : chr  "Cordobesainfliz" "PepeCarlosRuiz1" "bugambilla26" "CACHAZAS" ...
+#&gt;   ..$ : chr  "CACHAZAS" "maribelbotoah" "lamoscacojondra" "JoseLui43872588" ...
+#&gt;   ..$ : chr "elmundoes"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "Declaracion" "CesarCalderon" "_Redlines_"
+#&gt;   ..$ : chr "pnique"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "SoyTuAzote" "sempiterna8" "sanchezcastejon" "PSOE"
+#&gt;   ..$ : chr  "pmanglano" "sempiterna8"
+#&gt;   ..$ : chr "CristinaSegui_"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "ParlamentoAnd" "Pienso1ro" "JuanMa_Moreno"
+#&gt;   ..$ : chr "sanchezcastejon"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "angusticlavio" "blythe_club" "ldpsincomplejos" "budalupo" ...
+#&gt;   ..$ : chr  "VOXCastellon" "vox_es"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr  "jotaresucitado" "Cristin35742148" "vox_es"
+#&gt;   ..$ : chr "FJLOSANTOS10"
+#&gt;   ..$ : chr "_infoLibre"
+#&gt;   ..$ : chr  "DebatAlRojoVivo" "aliciaguti" "_infoLibre"
+#&gt;   ..$ : chr "Dany_Rios13"
+#&gt;   ..$ : chr "angel_munarriz"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "yolanda_glez"
+#&gt;   ..$ : chr "AlvaroSanCas"
+#&gt;   ..$ : chr "_infoLibre"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "_infoLibre"
+#&gt;   ..$ : chr "SabelaRulinha"
+#&gt;   ..$ : chr "angel_munarriz"
+#&gt;   ..$ : chr "Dany_Rios13"
+#&gt;   ..$ : chr "_infoLibre"
+#&gt;   ..$ : chr "aliciaguti"
+#&gt;   ..$ : chr "AlvaroSanCas"
+#&gt;   ..$ : chr "arrankstf"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "pablocasado_"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "Ferran_Bel"
+#&gt;   ..$ : chr "SergiVidal215"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "24h_tve"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "SergiVidal215"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "isanchezelsiglo"
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr NA
+#&gt;   ..$ : chr "sanchezcastejon"
+#&gt;   .. [list output truncated]
+#&gt;  $ lang                   : chr  "es" "en" "es" "es" ...
+#&gt;  $ quoted_status_id       : chr  NA NA NA NA ...
+#&gt;  $ quoted_text            : chr  NA NA NA NA ...
+#&gt;  $ quoted_created_at      : POSIXct, format: NA NA ...
+#&gt;  $ quoted_source          : chr  NA NA NA NA ...
+#&gt;  $ quoted_favorite_count  : int  NA NA NA NA NA NA NA NA NA NA ...
+#&gt;  $ quoted_retweet_count   : int  NA NA NA NA NA NA NA NA NA NA ...
+#&gt;  $ quoted_user_id         : chr  NA NA NA NA ...
+#&gt;  $ quoted_screen_name     : chr  NA NA NA NA ...
+#&gt;  $ quoted_name            : chr  NA NA NA NA ...
+#&gt;  $ quoted_followers_count : int  NA NA NA NA NA NA NA NA NA NA ...
+#&gt;  $ quoted_friends_count   : int  NA NA NA NA NA NA NA NA NA NA ...
+#&gt;  $ quoted_statuses_count  : int  NA NA NA NA NA NA NA NA NA NA ...
+#&gt;  $ quoted_location        : chr  NA NA NA NA ...
+#&gt;  $ quoted_description     : chr  NA NA NA NA ...
+#&gt;  $ quoted_verified        : logi  NA NA NA NA NA NA ...
+#&gt;  $ retweet_status_id      : chr  NA NA NA NA ...
+#&gt;  $ retweet_text           : chr  NA NA NA NA ...
+#&gt;  $ retweet_created_at     : POSIXct, format: NA NA ...
+#&gt;  $ retweet_source         : chr  NA NA NA NA ...
+#&gt;  $ retweet_favorite_count : int  NA NA NA NA NA NA NA NA NA NA ...
+#&gt;  $ retweet_retweet_count  : int  NA NA NA NA NA NA NA NA NA NA ...
+#&gt;  $ retweet_user_id        : chr  NA NA NA NA ...
+#&gt;  $ retweet_screen_name    : chr  NA NA NA NA ...
+#&gt;  $ retweet_name           : chr  NA NA NA NA ...
+#&gt;  $ retweet_followers_count: int  NA NA NA NA NA NA NA NA NA NA ...
+#&gt;  $ retweet_friends_count  : int  NA NA NA NA NA NA NA NA NA NA ...
+#&gt;  $ retweet_statuses_count : int  NA NA NA NA NA NA NA NA NA NA ...
+#&gt;  $ retweet_location       : chr  NA NA NA NA ...
+#&gt;  $ retweet_description    : chr  NA NA NA NA ...
+#&gt;  $ retweet_verified       : logi  NA NA NA NA NA NA ...
+#&gt;  $ place_url              : chr  NA NA NA NA ...
+#&gt;  $ place_name             : chr  NA NA NA NA ...
+#&gt;  $ place_full_name        : chr  NA NA NA NA ...
+#&gt;  $ place_type             : chr  NA NA NA NA ...
+#&gt;  $ country                : chr  NA NA NA NA ...
+#&gt;  $ country_code           : chr  NA NA NA NA ...
+#&gt;  $ geo_coords             :List of 8751
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   .. [list output truncated]
+#&gt;  $ coords_coords          :List of 8751
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   ..$ : num  NA NA
+#&gt;   .. [list output truncated]
+#&gt;  $ bbox_coords            :List of 8751
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  -3.32 -3.15 -3.15 -3.32 43.29 ...
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   ..$ : num  NA NA NA NA NA NA NA NA
+#&gt;   .. [list output truncated]
+#&gt;  $ status_url             : chr  "https://twitter.com/michetin/status/1085825260925186048" "https://twitter.com/bruselensewp/status/1085824595528015872" "https://twitter.com/mar_feliciano/status/1085823465846857728" "https://twitter.com/mar_feliciano/status/1082634334958505984" ...
+#&gt;  $ name                   : chr  "Fernandisco \U0001f1ea\U0001f1f8" "Bruselense" "Manuel Feliciano Mar" "Manuel Feliciano Mar" ...
+#&gt;  $ location               : chr  "Barcelona" "Bruselas" "" "" ...
+#&gt;  $ description            : chr  "Catalán con mundo, viajado,por lo tanto, buen español." "Observador de la realidad política y social internacional: en defensa de la vida, la familia y la libertad religiosa" "Español, católico y monárquico.! \nDios, Patria y Rey!\U0001f1ea\U0001f1f8" "Español, católico y monárquico.! \nDios, Patria y Rey!\U0001f1ea\U0001f1f8" ...
+#&gt;  $ url                    : chr  NA "http://t.co/IaJ5xzd2Yx" NA NA ...
+#&gt;  $ protected              : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+#&gt;  $ followers_count        : int  55 157 2209 2209 2209 2209 2209 6 547 547 ...
+#&gt;  $ friends_count          : int  99 117 2162 2162 2162 2162 2162 67 520 520 ...
+#&gt;  $ listed_count           : int  0 1 30 30 30 30 30 0 5 5 ...
+#&gt;  $ statuses_count         : int  1092 12413 78726 78726 78726 78726 78726 130 10462 10462 ...
+#&gt;  $ favourites_count       : int  1245 8314 198424 198424 198424 198424 198424 34 8300 8300 ...
+#&gt;  $ account_created_at     : POSIXct, format: "2011-01-18 09:26:18" "2013-03-07 21:30:01" ...
+#&gt;  $ verified               : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+#&gt;  $ profile_url            : chr  NA "http://t.co/IaJ5xzd2Yx" NA NA ...
+#&gt;  $ profile_expanded_url   : chr  NA "http://bruselense.wordpress.com" NA NA ...
+#&gt;  $ account_lang           : chr  "es" "es" "es" "es" ...
+#&gt;  $ profile_banner_url     : chr  "https://pbs.twimg.com/profile_banners/239737622/1521880787" "https://pbs.twimg.com/profile_banners/1250095825/1362732492" "https://pbs.twimg.com/profile_banners/704928207/1499159629" "https://pbs.twimg.com/profile_banners/704928207/1499159629" ...
+#&gt;  $ profile_background_url : chr  "http://abs.twimg.com/images/themes/theme1/bg.png" "http://abs.twimg.com/images/themes/theme1/bg.png" "http://abs.twimg.com/images/themes/theme1/bg.png" "http://abs.twimg.com/images/themes/theme1/bg.png" ...
+#&gt;  $ profile_image_url      : chr  "http://pbs.twimg.com/profile_images/998855851862458368/4HBoGDYf_normal.jpg" "http://pbs.twimg.com/profile_images/3350934277/55bc07c1013ebdec5689f8e31b8adf6c_normal.jpeg" "http://pbs.twimg.com/profile_images/942672356438405120/HKRFyFrg_normal.jpg" "http://pbs.twimg.com/profile_images/942672356438405120/HKRFyFrg_normal.jpg" ...
+```
+
+---
+layout: false
+layout: true
+
+# &lt;i class="fas fa-terminal"&gt;&lt;/i&gt;Twitter REST Data
+
+---
+
+### Obtener timeline
+
+
+```r
+get_timeline(user = "", n = 100)
+```
+- `user` = Vector of user names, user IDs, or a mixture of both.
+
+- `n` = Number of tweets to return per timeline. Defaults to 100. Must be of length 1 or equal to length of user.
+
+
+```r
+timeline_white_house &lt;- get_timeline(user = "WhiteHouse", n = 100)
+```
+
+
+
+---
+
+
+```
+Observations: 100
+Variables: 88
+$ user_id                 &lt;chr&gt; "822215673812119553", "82221567381211955…
+$ status_id               &lt;chr&gt; "1085959561868132360", "1085951177353777…
+$ created_at              &lt;dttm&gt; 2019-01-17 17:58:30, 2019-01-17 17:25:1…
+$ screen_name             &lt;chr&gt; "WhiteHouse", "WhiteHouse", "WhiteHouse"…
+$ text                    &lt;chr&gt; "Without a strong border, America is def…
+$ source                  &lt;chr&gt; "Twitter Media Studio", "WH Digital", "P…
+$ display_text_width      &lt;dbl&gt; 77, 106, 95, 137, 110, 139, 0, 140, 263,…
+$ reply_to_status_id      &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ reply_to_user_id        &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ reply_to_screen_name    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ is_quote                &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE…
+$ is_retweet              &lt;lgl&gt; FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, F…
+$ favorite_count          &lt;int&gt; 2468, 3818, 2714, 0, 0, 0, 8397, 0, 2698…
+$ retweet_count           &lt;int&gt; 865, 1349, 988, 16842, 24790, 5206, 3103…
+$ hashtags                &lt;list&gt; [NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ symbols                 &lt;list&gt; [NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ urls_url                &lt;list&gt; [NA, NA, "pscp.tv/w/bxCiXjFxTFFH…", NA,…
+$ urls_t.co               &lt;list&gt; [NA, NA, "https://t.co/M1iQTTZ18b", NA,…
+$ urls_expanded_url       &lt;list&gt; [NA, NA, "https://www.pscp.tv/w/bxCiXjF…
+$ media_url               &lt;list&gt; ["http://pbs.twimg.com/amplify_video_th…
+$ media_t.co              &lt;list&gt; ["https://t.co/ydVMU9jaVN", "https://t.…
+$ media_expanded_url      &lt;list&gt; ["https://twitter.com/WhiteHouse/status…
+$ media_type              &lt;list&gt; ["photo", "photo", NA, NA, NA, NA, "pho…
+$ ext_media_url           &lt;list&gt; ["http://pbs.twimg.com/amplify_video_th…
+$ ext_media_t.co          &lt;list&gt; ["https://t.co/ydVMU9jaVN", "https://t.…
+$ ext_media_expanded_url  &lt;list&gt; ["https://twitter.com/WhiteHouse/status…
+$ ext_media_type          &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ mentions_user_id        &lt;list&gt; [NA, NA, NA, "25073877", "25073877", "1…
+$ mentions_screen_name    &lt;list&gt; [NA, NA, NA, "realDonaldTrump", "realDo…
+$ lang                    &lt;chr&gt; "en", "en", "en", "en", "en", "en", "und…
+$ quoted_status_id        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ quoted_text             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ quoted_created_at       &lt;dttm&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ quoted_source           &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ quoted_favorite_count   &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ quoted_retweet_count    &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ quoted_user_id          &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ quoted_screen_name      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ quoted_name             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ quoted_followers_count  &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ quoted_friends_count    &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ quoted_statuses_count   &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ quoted_location         &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ quoted_description      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ quoted_verified         &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ retweet_status_id       &lt;chr&gt; NA, NA, NA, "1085915768003256321", "1085…
+$ retweet_text            &lt;chr&gt; NA, NA, NA, "So funny to watch Schumer g…
+$ retweet_created_at      &lt;dttm&gt; NA, NA, NA, 2019-01-17 15:04:29, 2019-0…
+$ retweet_source          &lt;chr&gt; NA, NA, NA, "Twitter for iPhone", "Twitt…
+$ retweet_favorite_count  &lt;int&gt; NA, NA, NA, 68108, 104657, 17590, NA, 37…
+$ retweet_retweet_count   &lt;int&gt; NA, NA, NA, 16842, 24790, 5206, NA, 1300…
+$ retweet_user_id         &lt;chr&gt; NA, NA, NA, "25073877", "25073877", "118…
+$ retweet_screen_name     &lt;chr&gt; NA, NA, NA, "realDonaldTrump", "realDona…
+$ retweet_name            &lt;chr&gt; NA, NA, NA, "Donald J. Trump", "Donald J…
+$ retweet_followers_count &lt;int&gt; NA, NA, NA, 57391233, 57391233, 447670, …
+$ retweet_friends_count   &lt;int&gt; NA, NA, NA, 45, 45, 1197, NA, 315, NA, 2…
+$ retweet_statuses_count  &lt;int&gt; NA, NA, NA, 40268, 40268, 4133, NA, 610,…
+$ retweet_location        &lt;chr&gt; NA, NA, NA, "Washington, DC", "Washingto…
+$ retweet_description     &lt;chr&gt; NA, NA, NA, "45th President of the Unite…
+$ retweet_verified        &lt;lgl&gt; NA, NA, NA, TRUE, TRUE, TRUE, NA, TRUE, …
+$ place_url               &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ place_name              &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ place_full_name         &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ place_type              &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ country                 &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ country_code            &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ geo_coords              &lt;list&gt; [&lt;NA, NA&gt;, &lt;NA, NA&gt;, &lt;NA, NA&gt;, &lt;NA, NA&gt;…
+$ coords_coords           &lt;list&gt; [&lt;NA, NA&gt;, &lt;NA, NA&gt;, &lt;NA, NA&gt;, &lt;NA, NA&gt;…
+$ bbox_coords             &lt;list&gt; [&lt;NA, NA, NA, NA, NA, NA, NA, NA&gt;, &lt;NA,…
+$ status_url              &lt;chr&gt; "https://twitter.com/WhiteHouse/status/1…
+$ name                    &lt;chr&gt; "The White House", "The White House", "T…
+$ location                &lt;chr&gt; "Washington, D.C.", "Washington, D.C.", …
+$ description             &lt;chr&gt; "Welcome to @WhiteHouse! Follow for the …
+$ url                     &lt;chr&gt; "https://t.co/wyOVgSLgBV", "https://t.co…
+$ protected               &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE…
+$ followers_count         &lt;int&gt; 17848196, 17848196, 17848196, 17848196, …
+$ friends_count           &lt;int&gt; 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, …
+$ listed_count            &lt;int&gt; 9506, 9506, 9506, 9506, 9506, 9506, 9506…
+$ statuses_count          &lt;int&gt; 6502, 6502, 6502, 6502, 6502, 6502, 6502…
+$ favourites_count        &lt;int&gt; 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9…
+$ account_created_at      &lt;dttm&gt; 2017-01-19 22:54:27, 2017-01-19 22:54:2…
+$ verified                &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE…
+$ profile_url             &lt;chr&gt; "https://t.co/wyOVgSLgBV", "https://t.co…
+$ profile_expanded_url    &lt;chr&gt; "http://www.WhiteHouse.gov", "http://www…
+$ account_lang            &lt;chr&gt; "en", "en", "en", "en", "en", "en", "en"…
+$ profile_banner_url      &lt;chr&gt; "https://pbs.twimg.com/profile_banners/8…
+$ profile_background_url  &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ profile_image_url       &lt;chr&gt; "http://pbs.twimg.com/profile_images/105…
+```
+
+---
+
+### Obtener friends (a quién sigue)
+
+.pull-left[
+
+```r
+get_friends(users = "", n = 5000)
+```
+- `user` = Vector of user names, user IDs, or a mixture of both.
+
+- `n` = Number of tweets to return per timeline. Defaults to 100. Must be of length 1 or equal to length of user.
+
+
+```r
+friends_info &lt;- get_friends("WhiteHouse")
+```
+
+]
+
+.pull-right[
+
+
+
+```
+#&gt; # A tibble: 12 x 2
+#&gt;    user       user_id           
+#&gt;    &lt;chr&gt;      &lt;chr&gt;             
+#&gt;  1 WhiteHouse 834189214652760065
+#&gt;  2 WhiteHouse 840236394865930240
+#&gt;  3 WhiteHouse 818928162449068032
+#&gt;  4 WhiteHouse 471672239         
+#&gt;  5 WhiteHouse 823367015830323201
+#&gt;  6 WhiteHouse 822127086194348032
+#&gt;  7 WhiteHouse 826093318878670848
+#&gt;  8 WhiteHouse 818927131883356161
+#&gt;  9 WhiteHouse 818910970567344128
+#&gt; 10 WhiteHouse 818876014390603776
+#&gt; 11 WhiteHouse 25073877          
+#&gt; 12 WhiteHouse 822215679726100480
+```
+]
+
+---
+
+### Obtener followers
+.pull-left[
+
+```r
+followers_info &lt;- get_followers("WhiteHouse")
+```
+- `user` = Vector of user names, user IDs, or a mixture of both.
+
+- `n` = Number of tweets to return per timeline. Defaults to 100. Must be of length 1 or equal to length of user.
+
+]
+
+.pull-right[
+
+```
+#&gt; # A tibble: 50 x 1
+#&gt;    user_id            
+#&gt;    &lt;chr&gt;              
+#&gt;  1 1085912530587795456
+#&gt;  2 1086195886089297920
+#&gt;  3 1086195854938128384
+#&gt;  4 1086196325874450432
+#&gt;  5 2795753592         
+#&gt;  6 1080949329454616578
+#&gt;  7 1086196398729515008
+#&gt;  8 1086193409738575872
+#&gt;  9 450976819          
+#&gt; 10 1086194021788045312
+#&gt; # … with 40 more rows
+```
+]
+
+---
+
+
+```r
+friends_info_data &lt;- lookup_users(friends_info$user_id)
+```
+
+
+
+
+```r
+friends_info_data[1:3, ]
+```
+
+```
+#&gt; # A tibble: 3 x 88
+#&gt;   user_id status_id created_at          screen_name text  source
+#&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;dttm&gt;              &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt; 
+#&gt; 1 834189… 10856589… 2019-01-16 22:04:06 OMBPress    "OMB… Tweet…
+#&gt; 2 840236… 10824952… 2019-01-08 04:32:34 WHNSC       It a… WH Di…
+#&gt; 3 818928… 10857335… 2019-01-17 03:00:24 Cabinet     Toda… WH Di…
+#&gt; # … with 82 more variables: display_text_width &lt;int&gt;,
+#&gt; #   reply_to_status_id &lt;lgl&gt;, reply_to_user_id &lt;lgl&gt;,
+#&gt; #   reply_to_screen_name &lt;lgl&gt;, is_quote &lt;lgl&gt;, is_retweet &lt;lgl&gt;,
+#&gt; #   favorite_count &lt;int&gt;, retweet_count &lt;int&gt;, hashtags &lt;list&gt;,
+#&gt; #   symbols &lt;list&gt;, urls_url &lt;list&gt;, urls_t.co &lt;list&gt;,
+#&gt; #   urls_expanded_url &lt;list&gt;, media_url &lt;list&gt;, media_t.co &lt;list&gt;,
+#&gt; #   media_expanded_url &lt;list&gt;, media_type &lt;list&gt;, ext_media_url &lt;list&gt;,
+#&gt; #   ext_media_t.co &lt;list&gt;, ext_media_expanded_url &lt;list&gt;,
+#&gt; #   ext_media_type &lt;chr&gt;, mentions_user_id &lt;list&gt;,
+#&gt; #   mentions_screen_name &lt;list&gt;, lang &lt;chr&gt;, quoted_status_id &lt;chr&gt;,
+#&gt; #   quoted_text &lt;chr&gt;, quoted_created_at &lt;dttm&gt;, quoted_source &lt;chr&gt;,
+#&gt; #   quoted_favorite_count &lt;int&gt;, quoted_retweet_count &lt;int&gt;,
+#&gt; #   quoted_user_id &lt;chr&gt;, quoted_screen_name &lt;chr&gt;, quoted_name &lt;chr&gt;,
+#&gt; #   quoted_followers_count &lt;int&gt;, quoted_friends_count &lt;int&gt;,
+#&gt; #   quoted_statuses_count &lt;int&gt;, quoted_location &lt;chr&gt;,
+#&gt; #   quoted_description &lt;chr&gt;, quoted_verified &lt;lgl&gt;,
+#&gt; #   retweet_status_id &lt;chr&gt;, retweet_text &lt;chr&gt;,
+#&gt; #   retweet_created_at &lt;dttm&gt;, retweet_source &lt;chr&gt;,
+#&gt; #   retweet_favorite_count &lt;int&gt;, retweet_retweet_count &lt;int&gt;,
+#&gt; #   retweet_user_id &lt;chr&gt;, retweet_screen_name &lt;chr&gt;, retweet_name &lt;chr&gt;,
+#&gt; #   retweet_followers_count &lt;int&gt;, retweet_friends_count &lt;int&gt;,
+#&gt; #   retweet_statuses_count &lt;int&gt;, retweet_location &lt;chr&gt;,
+#&gt; #   retweet_description &lt;chr&gt;, retweet_verified &lt;lgl&gt;, place_url &lt;chr&gt;,
+#&gt; #   place_name &lt;chr&gt;, place_full_name &lt;chr&gt;, place_type &lt;chr&gt;,
+#&gt; #   country &lt;chr&gt;, country_code &lt;chr&gt;, geo_coords &lt;list&gt;,
+#&gt; #   coords_coords &lt;list&gt;, bbox_coords &lt;list&gt;, status_url &lt;chr&gt;,
+#&gt; #   name &lt;chr&gt;, location &lt;chr&gt;, description &lt;chr&gt;, url &lt;chr&gt;,
+#&gt; #   protected &lt;lgl&gt;, followers_count &lt;int&gt;, friends_count &lt;int&gt;,
+#&gt; #   listed_count &lt;int&gt;, statuses_count &lt;int&gt;, favourites_count &lt;int&gt;,
+#&gt; #   account_created_at &lt;dttm&gt;, verified &lt;lgl&gt;, profile_url &lt;chr&gt;,
+#&gt; #   profile_expanded_url &lt;chr&gt;, account_lang &lt;chr&gt;,
+#&gt; #   profile_banner_url &lt;chr&gt;, profile_background_url &lt;chr&gt;,
+#&gt; #   profile_image_url &lt;chr&gt;
+```
+
+```r
+tweets_data(friends_info_data[1:3, ])
+```
+
+```
+#&gt; # A tibble: 3 x 68
+#&gt;   user_id status_id created_at          screen_name text  source
+#&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;dttm&gt;              &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt; 
+#&gt; 1 834189… 10856589… 2019-01-16 22:04:06 OMBPress    "OMB… Tweet…
+#&gt; 2 840236… 10824952… 2019-01-08 04:32:34 WHNSC       It a… WH Di…
+#&gt; 3 818928… 10857335… 2019-01-17 03:00:24 Cabinet     Toda… WH Di…
+#&gt; # … with 62 more variables: display_text_width &lt;int&gt;,
+#&gt; #   reply_to_status_id &lt;lgl&gt;, reply_to_user_id &lt;lgl&gt;,
+#&gt; #   reply_to_screen_name &lt;lgl&gt;, is_quote &lt;lgl&gt;, is_retweet &lt;lgl&gt;,
+#&gt; #   favorite_count &lt;int&gt;, retweet_count &lt;int&gt;, hashtags &lt;list&gt;,
+#&gt; #   symbols &lt;list&gt;, urls_url &lt;list&gt;, urls_t.co &lt;list&gt;,
+#&gt; #   urls_expanded_url &lt;list&gt;, media_url &lt;list&gt;, media_t.co &lt;list&gt;,
+#&gt; #   media_expanded_url &lt;list&gt;, media_type &lt;list&gt;, ext_media_url &lt;list&gt;,
+#&gt; #   ext_media_t.co &lt;list&gt;, ext_media_expanded_url &lt;list&gt;,
+#&gt; #   ext_media_type &lt;chr&gt;, mentions_user_id &lt;list&gt;,
+#&gt; #   mentions_screen_name &lt;list&gt;, lang &lt;chr&gt;, quoted_status_id &lt;chr&gt;,
+#&gt; #   quoted_text &lt;chr&gt;, quoted_created_at &lt;dttm&gt;, quoted_source &lt;chr&gt;,
+#&gt; #   quoted_favorite_count &lt;int&gt;, quoted_retweet_count &lt;int&gt;,
+#&gt; #   quoted_user_id &lt;chr&gt;, quoted_screen_name &lt;chr&gt;, quoted_name &lt;chr&gt;,
+#&gt; #   quoted_followers_count &lt;int&gt;, quoted_friends_count &lt;int&gt;,
+#&gt; #   quoted_statuses_count &lt;int&gt;, quoted_location &lt;chr&gt;,
+#&gt; #   quoted_description &lt;chr&gt;, quoted_verified &lt;lgl&gt;,
+#&gt; #   retweet_status_id &lt;chr&gt;, retweet_text &lt;chr&gt;,
+#&gt; #   retweet_created_at &lt;dttm&gt;, retweet_source &lt;chr&gt;,
+#&gt; #   retweet_favorite_count &lt;int&gt;, retweet_user_id &lt;chr&gt;,
+#&gt; #   retweet_screen_name &lt;chr&gt;, retweet_name &lt;chr&gt;,
+#&gt; #   retweet_followers_count &lt;int&gt;, retweet_friends_count &lt;int&gt;,
+#&gt; #   retweet_statuses_count &lt;int&gt;, retweet_location &lt;chr&gt;,
+#&gt; #   retweet_description &lt;chr&gt;, retweet_verified &lt;lgl&gt;, place_url &lt;chr&gt;,
+#&gt; #   place_name &lt;chr&gt;, place_full_name &lt;chr&gt;, place_type &lt;chr&gt;,
+#&gt; #   country &lt;chr&gt;, country_code &lt;chr&gt;, geo_coords &lt;list&gt;,
+#&gt; #   coords_coords &lt;list&gt;, bbox_coords &lt;list&gt;
+```
+
+---
+
+### Otras funciones de interés `get_retweeters`
+
+```r
+get_retweeters(status_id, n = 100, parse = TRUE, token = NULL)
+```
+Devuelve ID de los usuarios que han retwuiteado un determinado tweet. Actualmente está limitado a devolver un máximo número de 100 usuarios por tweet:
+
+- `status_id`: requiere el ID de un status.
+
+- `n`: Especifica el número de total de records que devolver.
+
+- `parse`: Lógica, indicando si hay que convertir el objeto obtenido en un lista de R. Por defecto TRUE.
+
+- `token`: Cada usuario debe tener su propio token. 
+
+---
+
+### Otras funciones de interés `get_retweets`
+
+```r
+get_retweets(status_id, n = 100, parse = TRUE, token = NULL, ...)
+```
+
+Devuelve una colección de los retweets más recientes de un determinado tweet. NOTE: Twitter's API is currently limited to 100 or fewer retweeters.
+
+- `status_id`: requiere el ID de un status.
+
+- `n`: Especifica el número de total de records que devolver.
+
+- `parse`: Lógica, indicando si hay que convertir el objeto obtenido en un lista de R. Por defecto TRUE.
+
+- `token`: Cada usuario debe tener su propio token. 
+
+---
+layout: false
+
+# &lt;i class="fas fa-save"&gt;&lt;/i&gt; Guardar los datos `.csv`
+
+
+```r
+write_as_csv(x = "", file_name = "")
+```
+Guardamos los datos en formato `.csv`:
+  - `x`: Objeto que queremos guardar, preferentemente en formato matriz de datos.
+  
+  - `file_name`: Dirección en la que queremos guardar el objeto. Ha de especifiarse el formato.
+
+
+```r
+write_as_csv(x = followers_info_data, file_name = "./data/followers_info_data.csv")
+```
+
+---
+
+# Siguientes pasos:
+
+ - ## &lt;i class="fas fa-glasses"&gt;&lt;/i&gt; Explorar los datos
+ - ## &lt;i class="fas fa-robot"&gt;&lt;/i&gt; Persona o máquina
+ - ## &lt;i class="fas fa-broom"&gt;&lt;/i&gt; Clasificar temáticas
+ - ## &lt;i class="fas fa-chart-line"&gt;&lt;/i&gt; Analizar los datos
+
+---
+layout: true
+# &lt;i class="fas fa-glasses"&gt;&lt;/i&gt; Explorar los datos
+
+---
+
+Primer vistazo a los datos obtenidos y manipulación del texto:
+
+--
+
+- Observar la frecuencia de los tweets obtenidos, cuando se ha tuiteado más, coincidencia con fechas importantes.
+
+--
+
+- Nubes de palabras y otros gráficos exploratorios.
+
+--
+
+- Empezar a manipular el texto: `tm`, `quanteda`, `tidytext`.
+
+&lt;img src="./01_twitter_files/tidytext.png" width="20%" style="display: block; margin: auto;" /&gt;
+
+---
+
+`ts_plot` es una función de `rtweet` que permite hacer un gráfico agrupando los tweets por fecha: 
+
+
+```r
+ts_plot(data, by = "days")
+```
+Argumentos:
+
+- `data`: Conjunto de datos obtenidos a través de `rtweet`.
+
+- `by`: Intervalo de tiempo deseado: "secs", "mins", "hours", "days", "weeks", "months", o "years". 
+
+---
+layout: false
+
+
+
+&lt;img src="01_twitter_files/figure-html/unnamed-chunk-31-1.png" width="99%" /&gt;
+
+---
+
+
+&lt;img src="01_twitter_files/figure-html/unnamed-chunk-32-1.png" width="99%" /&gt;
+---
+layout: true
+
+# &lt;i class="fas fa-glasses"&gt;&lt;/i&gt; Explorar los datos
+
+---
+
+### Empezar a trabajar con el texto:
+
+Consideraciones importantes: 
+
+- `R` permite trabajar con texto.
+
+--
+
+- Twitter permite principalmente tres clases diferentes de texto: 
+
+--
+  - hashtags 
+
+--
+  - menciones 
+
+--
+  - texto plano
+
+--
+  - Además de los emoticonos! &amp;#x1F649;
+
+--
+
+- **Bag of words**: método que se utiliza en el procesado del lenguaje para representar documentos ignorando hasta cierto punto el orden de las palabras.
+
+--
+
+- **Stemming process** o lematización: consiste en trabajar con la raíz de las palabras obviando las terminaciones y morfemas. 
+
+--
+
+- **Unspelling** o errores ortográficos
+
+---
+
+### &lt;i class="fas fa-align-justify"&gt;&lt;/i&gt; tidytext: text as data &lt;sup&gt;1&lt;/sup&gt; 
+&lt;img src="./01_twitter_files/text_as_data.png" width="100%" /&gt;
+
+.foot-note[
+[1] Welbers, K., Van Atteveldt, W., &amp; Benoit, K. (2017). Text Analysis in R. COMMUNICATION METHODS AND MEASURES, 11(4), 245-265. http://doi.org/10.1080/19312458.2017.1387238
+]
+
+---
+
+### &lt;i class="fas fa-align-justify"&gt;&lt;/i&gt; text as data in R&lt;sup&gt;1&lt;/sup&gt; 
+&lt;img src="./01_twitter_files/tidyflow-ch-1.png" width="100%" /&gt;
+
+.foot-note[
+[1] Silge J, Robinson D (2016). “tidytext: Text Mining and Analysis Using Tidy Data
+Principles in R.” _JOSS_, *1*(3). doi: 10.21105/joss.00037 (URL:
+http://doi.org/10.21105/joss.00037), &lt;URL: http://dx.doi.org/10.21105/joss.00037&gt;.
+]
+
+
+---
+layout: false
+
+&lt;img src="./01_twitter_files/tidyflow-nlp.png" width="90%" /&gt;
+
+---
+
+### Bag of words
+
+```r
+text &lt;- data_frame(txt = "Esto es un ejemplo de bag of words")
+
+text %&gt;%
+  unnest_tokens(word, txt) %&gt;%
+  count(word)
+```
+
+```
+#&gt; # A tibble: 8 x 2
+#&gt;   word        n
+#&gt;   &lt;chr&gt;   &lt;int&gt;
+#&gt; 1 bag         1
+#&gt; 2 de          1
+#&gt; 3 ejemplo     1
+#&gt; 4 es          1
+#&gt; 5 esto        1
+#&gt; 6 of          1
+#&gt; 7 un          1
+#&gt; 8 words       1
+```
+
+---
+
+### Stemming process
+
+
+```r
+text &lt;- c("love", "loving", "lovingly", "loved", "lovely")
+
+corpus::text_tokens(text, stemmer = "en") %&gt;% unlist()
+```
+
+```
+#&gt; [1] "love" "love" "love" "love" "love"
+```
+
+---
+layout:false
+
+
+&lt;img src="01_twitter_files/figure-html/unnamed-chunk-37-1.png" width="99%" /&gt;
+---
+
+
+&lt;img src="01_twitter_files/figure-html/unnamed-chunk-38-1.png" width="99%" /&gt;
+
+---
+
+
+&lt;img src="01_twitter_files/figure-html/unnamed-chunk-39-1.png" width="99%" /&gt;
+
+---
+
+
+&lt;img src="01_twitter_files/figure-html/unnamed-chunk-40-1.png" width="99%" /&gt;
+
+---
+
+
+
+&lt;img src="01_twitter_files/figure-html/unnamed-chunk-41-1.png" width="99%" /&gt;
+---
+
+&lt;img src="01_twitter_files/figure-html/unnamed-chunk-42-1.png" width="99%" /&gt;
+---
+
+# &lt;i class="fas fa-robot"&gt;&lt;/i&gt; ¿Quién twitea? 
+
+&lt;img src="./01_twitter_files/u_bot.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# &lt;i class="fas fa-broom"&gt;&lt;/i&gt; Data cleaning
+### Clasificación y limpieza:
+.pull-left[
+**Supervised learning:**
+  - Se conoce a priori las categorías.
+  
+  - Una parte ha sido codificada a mano previarmente.
+  
+  - Clasificar en función de una serie de características.
+
+]
+
+.pull-right[
+**Unsupervised learning:**
+  - Pueden no conocerse a priori las categorías.
+  
+  - No hay clasificación previa.
+  
+  - Suele clasificarse en función del propio contenido del texto, aunque también puede hacerse teniendo en cuenta las características.
+]
+
+---
+
+# &lt;i class="fas fa-broom"&gt;&lt;/i&gt; Data cleaning
+
+**Advanced NLP:**
+- Lematización
+
+- Part-of-speech tagging
+
+- Dependency parsing
+
+- Word positions and syntax: unigram, bigrams, trigrams
+
+---
+layout:false
+class: center, middle, inverse
+
+&lt;img src="./01_twitter_files/rtweet.png" width="20%" /&gt;&lt;img src="./01_twitter_files/botornot.png" width="20%" /&gt;&lt;img src="./01_twitter_files/tidytext.png" width="20%" /&gt;&lt;img src="./01_twitter_files/tidyverse.png" width="20%" /&gt;
+
+---
+layout: true
+
+# &lt;i class="fab fa-facebook-square"&gt;&lt;/i&gt; Facebook data
+
+---
+
+&lt;img src="./01_twitter_files/facebook policy.png" width="100%" /&gt;
+
+Más información: [link](https://developers.facebook.com/docs/pages/)
+---
+
+
+Paquetes antes utilizados:
+ - `Rfacebook`: 
+   - Pablo Barbera, Michael Piccirilli, Andrew Geisler and Wouter van Atteveldt
+    (2017). Rfacebook: Access to Facebook API via R. R package version 0.6.15.
+    
+ - `fbRAds`: 
+  - jaykumar Gopal and Gergely Daroczi (2016). fbRads: Analyzing and Managing
+    Facebook Ads from R. R package version 0.2.
+
+ - `rfacebookstat`: 
+  - Alexey Seleznev (2018). rfacebookstat: Load Data from Facebook API
+    Marketing. R package version 1.8.3.
+
+
+---
+layout: false
+
+# &lt;i class="fas fa-archive"&gt;&lt;/i&gt; Repositorios
+
+ - [UCI Network Data Repository](http://networkdata.ics.uci.edu/)
+
+ - [Network Repository. An Interactive Scientific Data Repository.](http://networkrepository.com/team.php)
+ 
+ - [Stanford Large Network Dataset Collection](https://snap.stanford.edu/data/)
+ 
+.center[
+&lt;i class="fas fa-plus"&gt;&lt;/i&gt;
+]
+
+&lt;img src="./01_twitter_files/gephi.png" width="50%" style="display: block; margin: auto;" /&gt;
+ 
+---
+class: center, middle
+
+# Thanks!
+
+Slides created via the R package [**xaringan**](https://github.com/yihui/xaringan).
+
+The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.name/knitr), and [R Markdown](https://rmarkdown.rstudio.com).
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,84 @@
+a:link, a:visited {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+a:hover, a:focus {
+  text-decoration: underline;
+  color: #ee5863;
+}
+
+.title-slide {
+  background-color: #FFF;
+  background-image: url(https://gabcomunicacion.uca.es/wp-content/uploads/2017/05/Logo-V2-Color-Impresi%C3%B3n-50x66-mm-jpg.jpg?u);
+  background-position: 95% 95%;
+  background-size: 100px;
+}
+.title-slide, .title-slide h1, .title-slide h2, .title-slide h3 {
+  color: #23395b;
+}
+.title-slide {
+  background-color: #fff;
+}
+
+.title-slide, .title-slide a {
+  font-weight: normal;
+  color: #4069a5;
+  font-size: 30px;
+}
+/* link color */
+.title-slide, .title-slide a, .title-slide a > .title-slide code {
+  color: #4069a5;
+  text-decoration: none;
+}
+
+/* unvisited link */
+.title-slide, .title-slide a:link {
+  color: #4069a5;
+}
+
+/* visited link */
+.title-slide, .title-slide a:visited {
+  color: #4069a5;
+}
+
+/* mouse over link */
+.title-slide, .title-slide a:hover {
+  color: #ee5863;
+  text-decoration: none;
+}
+
+/* selected link */
+.title-slide, .title-slide a:active {
+  color: #ee5863;
+}
+
+/* red */
+.red { color: red; }
+
+/* plot full --- credit https://www.garrickadenbuie.com*/
+/* custom.css */
+.left-code {
+  color: #777;
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+.right-plot {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+.plot-callout {
+  height: 225px;
+  width: 450px;
+  bottom: 5%;
+  right: 5%;
+  position: absolute;
+  padding: 0px;
+  z-index: 100;
+}
+.plot-callout img {
+  width: 100%;
+  border: 4px solid #23373B;
+}

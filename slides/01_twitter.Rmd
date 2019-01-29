@@ -1,0 +1,1062 @@
+---
+title: 'Social Network Analysis <br> <i class="fas fa-globe"></i> &nbsp; <i class="fas fa-laptop"></i> &nbsp; <i class="fas fa-chart-line"></i> <br>'
+subtitle: 'Twitter Data '  
+author: 'Javier Álvarez-Gálvez, PhD <br> Víctor Sanz, PhD Student <br><br><a href="mailto:victor.sanz@uca.es"><i class="fa fa-paper-plane fa-fw"></i>&nbsp;victor.sanz@uca.es</a><br><a href="https://twitter.com/vsslledo"> <i class="fab fa-twitter"></i>&nbsp; @vsslledo</a><br><a href="https://github.com/VictorSuarezL"><i class="fab fa-github"></i>&nbsp; VictorSuarezL</a>'
+date: ""
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: ["xaringan-themer.css", "title_slide.css"]
+    nature: 
+      ratio: 16:9
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: "https://platform.twitter.com/widgets.js"
+    includes:
+      in_header: header.html  
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(echo = TRUE, tidy = 'styler', comment = '#>', fig.dim=c(4.8, 4.5), fig.retina=2, out.width="100%", warning = FALSE, message = FALSE, cache = TRUE)
+
+# Credit: https://gist.github.com/gadenbuie/3869b688f5e50882e67b684a1e092937
+knitr::opts_hooks$set(fig.callout = function(options) {
+  if (options$fig.callout) {
+    options$echo <- FALSE
+    options$out.width = "99%"
+    options$fig.width <- 8
+  }
+  options
+})
+library(tidyverse)
+library(rtweet)
+library(ggthemes)
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+mono_light(
+  code_font_family = "Fira Code",
+  code_font_url    = "https://cdn.rawgit.com/tonsky/FiraCode/1.204/distr/fira_code.css"
+)
+```
+
+```{r echo=FALSE}
+reorder_within <- function(x, by, within, fun = mean, sep = "___", ...) {
+  new_x <- paste(x, within, sep = sep)
+  stats::reorder(new_x, by, FUN = fun)
+}
+
+
+#' @rdname reorder_within
+#' @export
+scale_x_reordered <- function(..., sep = "___") {
+  reg <- paste0(sep, ".+$")
+  ggplot2::scale_x_discrete(labels = function(x) gsub(reg, "", x), ...)
+}
+
+
+#' @rdname reorder_within
+#' @export
+scale_y_reordered <- function(..., sep = "___") {
+  reg <- paste0(sep, ".+$")
+  ggplot2::scale_y_discrete(labels = function(x) gsub(reg, "", x), ...)
+}
+
+```
+# <i class="fas fa-indent"></i> Índice:
+
+.pull-left[
+### Mañana
+
+1. Introducción:
+  1. Twitter API
+  1. Información en un Tweet
+  1. Formato de un Tweet
+
+1. Stream API
+
+1. Rest API
+
+1. Problemas de muestreo
+
+1. Authentication / Identificación
+
+1. Twitter Streaming Data
+
+1. Twitter REST Data
+]
+
+--
+
+.pull-right[
+### Tarde
+
+1. Siguientes pasos:
+
+  1. Explorar los datos
+  1. Localizar quién tuitea
+  1. Clasificar las temáticas
+  1. Analizar los datos
+  
+1. Facebook
+1. Gephi
+]
+
+
+---
+
+# <i class="fab fa-twitter"></i> Twitter API  
+
+**API**: Application Programming Interface.
+
+<u>Existen dos métodos para acceder a los datos:</u>
+
+--
+
+1. **Stream API**:
+
+  - Proporciona un flujo de tweets en tiempo real pueden filtarse por una serie de características, siendo las más habituales: palabras clave, usuarios y localizaciones.
+  - También puede obtenerse una muestra aleatoria (~1%).
+  - Limitaciones: Sólo en tiempo real.
+  - Paquetes: StreamR, rtweet, twitteR.
+
+--
+
+1. **REST API**: 
+
+  - Proporciona información sobre el perfil de usuarios, timeline, lista de usuarios y seguidores, etc.
+  - Limitaciones: 180.000 tweets cada 15 min sin limitación temporal. 
+  - Paquetes: rtweet, twitteR.
+  
+---
+
+# <i class="fas fa-database"></i> Información en un Tweet 
+
+<blockquote class="twitter-tweet" data-lang="es"><p lang="en" dir="ltr">Earlier this evening, President <a href="https://twitter.com/realDonaldTrump?ref_src=twsrc%5Etfw">@realDonaldTrump</a> treated the Clemson Tigers football team to dinner in the State Dining Room! <a href="https://twitter.com/hashtag/ALLIN?src=hash&amp;ref_src=twsrc%5Etfw">#ALLIN</a> <a href="https://t.co/P5JAo6yzfR">pic.twitter.com/P5JAo6yzfR</a></p>&mdash; The White House (@WhiteHouse) <a href="https://twitter.com/WhiteHouse/status/1084988299041738752?ref_src=twsrc%5Etfw">15 de enero de 2019</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+---
+layout: true
+
+# <i class="fas fa-table"></i> Formato Tweet
+
+---
+```{r echo=FALSE, comment=''}
+twitter_df <- readRDS("../data/timeline_white_house.rds")
+
+twitter_df %>% 
+  select(user_id, status_id, created_at, screen_name, text, source, reply_to_status_id, reply_to_user_id, reply_to_screen_name, is_retweet, favorite_count, retweet_count) %>% str()
+```
+
+---
+
+## Variables obtenidas
+
+- **user_id:** ID del usuario.
+- **status_id:** ID del status o tweet.
+- **created_at:** Fecha de creación del tweet.
+- **screenName:** Nombre de pantalla del usuario.
+- **text:** Texto dentro del status o tweet.
+- **source:** Clase de dispositivo.
+- **reply_to_status_id:** ID del status al que responde.
+- **reply_to_user_id:** ID del usuario al que responde.
+- **reply_to_screen_name:** Nombre de pantalla al que responde.
+- **is_retweet:** TRUE si el status o tweet ha sido retwuiteado.
+- **favorite_count:** Número de veces el status o tweet ha sido marcado como favorito.
+- **retweet_count:** Número de veces el status o tweet ha sido retwuiteado.
+
+---
+layout: false
+class: inverse, center, middle
+
+# <i class="fas fa-bullhorn"></i> Stream API 
+
+---
+layout: true
+
+# <i class="fas fa-bullhorn"></i> Características Stream API
+
+---
+
+Documentación: [link](https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/connecting.html).
+
+--
+
+### Es la manera más recomendada para extraer la información: 
+  - 400 palabras clave
+  
+  - 5,000 id de usuarios 
+  
+  - 25 location boxes<sup>1</sup>
+
+--
+
+### Problemas:
+
+  - Puede desconectarse con facilidad
+  
+  - Es recomendable guardar la información obtenida con regularidad
+  
+  - Programar script para reiniciarse cada hora
+
+.foot-note[
+[Location Boxes](https://boundingbox.klokantech.com/)
+]
+
+---
+layout: false
+class: inverse, center, middle
+
+# <i class="fas fa-undo-alt"></i> Rest API 
+
+---
+
+# <i class="fas fa-undo-alt"></i> Características Rest API
+
+Documentación: [link](https://developer.twitter.com/en/docs/tweets/post-and-engage/overview)
+
+### Es la manera de obtener mayor tipo de información:
+  - Timeline
+  
+  - Información del usuario
+  
+  - Lista de friends
+  
+  - Lista de followers
+  
+  
+### Problemas:
+  - Las cantidad de búsqueda está limitada
+  
+  - Retroceder en el tiempo es complicado
+
+---
+class: center, middle, inverse
+
+# <i class="fab fa-creative-commons-sampling"></i> Sampling bias?
+
+---
+layout: true
+
+# <i class="fab fa-creative-commons-sampling"></i> Sampling bias?
+
+---
+
+- **Morstatter, F., Pfeffer, J., Liu, H., & Carley, K. M.** (2013). Is the Sample Good Enough? Comparing Data from Twitter’s Streaming API with Twitter’s Firehose. [Link](http://doi.org/10.1007/978-3-319-05579-4_10) 
+
+- **González-Bailón, S., Wang, N., Rivero, A., Borge-Holthoefer, J., & Moreno, Y.** (2014). Assessing the bias in samples of large online networks. Social Networks. [Link](http://doi.org/10.1016/j.socnet.2014.01.004)
+
+- **Driscoll, K., & Walker, S.** (2014). Working within a black box: Transparency in the collection and production of big twitter data. International Journal of Communication. [Link]( http://doi.org/10.1016/j.jaci.2003.08.001)
+
+- **Joseph, K., Landwehr, P. M., & Carley, K. M.** (2014). Two 1%s Don’t make a whole: Comparing simultaneous samples from Twitter’s Streaming API. En Lecture Notes in Computer Science (including subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics). [Link](http://doi.org/10.1007/978-3-319-05579-4_10)
+
+- **Steinert-Threlkeld**, Z. (2018). Twitter as Data (Elements in Quantitative and Computational Methods for the Social Sciences). Cambridge: Cambridge University Press. doi:10.1017/9781108529327
+
+---
+
+### Consideraciones
+
+- La muestra aleatoria del 1% no es realmente aleatoria.
+
+- Los hashtags, usuarios, topics menos populares son menos probables de entrar en la muestra.
+
+- Para las búsquedas realizadas por keyword el sesgo no es tan importante.
+
+- Las muestras pequeñas obtenidas a través de un conjunto de hashtags pueden estar sesgadas.
+
+- Los datos obtenidos a través de la REST API están más sesgados que los obtenidos a través de la Streaming API.
+
+---
+layout: false
+class: inverse, center, middle
+
+# <i class="far fa-id-card"></i> Authentication/Identificación
+
+---
+# <i class="far fa-id-card"></i> Authentication/Identificación
+
+Para obtener el `token`:
+1. Ir a [developer.twitter.com/app](https://developer.twitter.com/app), identificarse con cuenta activa en Twitter.
+
+2. "Create New App": Es necesario tener un teléfono asociado a la cuenta de Twitter.
+
+3. Rellenar el nombre, descripción y sitio web, puede ser cualquier cosa.
+
+4. `Callback URL`: `http://127.0.0.1:1410`.
+
+4. Aceptar condiciones de usuario.
+
+5. Copiar `Keys and Access Tokens`, copiar `CONSUMER KEY` y `CONSUMER SECRET`.
+
+---
+class: inverse, center, middle
+
+# <i class="fas fa-laptop-code"></i> Twitter Streaming Data 
+
+---
+layout: true
+
+# <i class="fas fa-laptop-code"></i> Twitter Streaming Data
+
+---
+
+
+
+
+## `rtweet` package<sup>1</sup>
+
+```{r eval=FALSE}
+library(rtweet)
+
+token <- create_token(
+  app = "rtweet_api",
+  consumer_key = "************************",
+  consumer_secret = "********************************",
+  access_token = "************************",
+  access_secret = "********************************")
+```
+.footnote[
+[1] Kearney, M. W. (2018). rtweet: Collecting Twitter Data. R package version 0.6.7
+  Retrieved from https://cran.r-project.org/package=rtweet
+]
+
+---
+
+### Stream data collection
+```{r eval=FALSE}
+stream_tweets(q = "", timeout = 30, file_name = "")
+```
+
+- `q`: Query usada para seleccionar y personalizar la búsqueda.
+  - `""`: Proporciona una muestra _aleatoria_.
+  - **keyword** y **user**: Si son varios separar por una coma.
+  - **location**: Usar coordenadas de rectángulo donde deben estar incluidos los tweets. .red[<i class="fas fa-exclamation-triangle"></i>]
+- `timeout`: Cantidad de tiempo en segundos para dejar la conexión abierta durante la captura de tweets. 
+
+- `file_name`: Nombre del archivo `.json`.
+
+```{r, eval=FALSE}
+stream_data <- stream_tweets(q = "#earthquake", timeout = 90)
+```
+
+---
+
+```{r include=FALSE}
+stream_data <- read_rds("../data/stream_data_collection_example.rds")
+```
+
+```{r echo=FALSE}
+str(stream_data %>% select(user_id, created_at, screen_name, text, source, hashtags))
+```
+
+---
+class: inverse, center, middle
+layout: false
+
+# <i class="fas fa-terminal"></i>Twitter REST Data
+
+---
+layout: true
+
+# <i class="fas fa-terminal"></i>Twitter REST Data
+---
+
+### `rtweet` package<sup>1</sup>
+
+```{r eval=FALSE}
+library(rtweet)
+
+token <- create_token(
+  app = "rtweet_api",
+  consumer_key = "************************",
+  consumer_secret = "********************************",
+  access_token = "************************",
+  access_secret = "********************************")
+```
+.footnote[
+[1] Kearney, M. W. (2018). rtweet: Collecting Twitter Data. R package version 0.6.7
+  Retrieved from https://cran.r-project.org/package=rtweet
+]
+
+---
+
+### Búsqueda por palabras clave
+```{r eval=FALSE}
+rt <- search_tweets(q = "", n = 26000, include_rts = FALSE)
+```
+
+- `q`: Query to be searched.
+
+- `n`: Integer, specifying the total number of desired tweets to return. 
+
+- `include_rts`: Logical, indicating whether to include retweets in search results. 
+
+```{r eval=FALSE}
+rt <- search_tweets(q = "#Vox", n = 26000, include_rts = FALSE)
+```
+
+---
+
+```{r remedy001, echo=FALSE}
+rt <- read_rds("../data/vox_rest_api_example.rds")
+str(rt)
+```
+
+---
+layout: false
+layout: true
+
+# <i class="fas fa-terminal"></i>Twitter REST Data
+
+---
+
+### Obtener timeline
+
+```{r eval=FALSE}
+get_timeline(user = "", n =100)
+```
+- `user` = Vector of user names, user IDs, or a mixture of both.
+
+- `n` = Number of tweets to return per timeline. Defaults to 100. Must be of length 1 or equal to length of user.
+
+```{r eval=FALSE}
+timeline_white_house <- get_timeline(user = "WhiteHouse", n =100)
+```
+
+```{r echo=FALSE}
+timeline_white_house <- read_rds("../data/timeline_white_house.rds")
+```
+
+---
+
+```{r echo=FALSE, comment=""}
+glimpse(timeline_white_house)
+```
+
+---
+
+### Obtener friends (a quién sigue)
+
+.pull-left[
+```{r eval=FALSE}
+get_friends(users = "", n = 5000)
+```
+- `user` = Vector of user names, user IDs, or a mixture of both.
+
+- `n` = Number of tweets to return per timeline. Defaults to 100. Must be of length 1 or equal to length of user.
+
+```{r eval=FALSE}
+friends_info <- get_friends("WhiteHouse")
+```
+
+]
+
+.pull-right[
+```{r echo=FALSE}
+friends_info <- read_rds("../data/friends_info.rds")
+```
+
+```{r echo=FALSE}
+friends_info
+```
+]
+
+---
+
+### Obtener followers
+.pull-left[
+```{r eval=FALSE}
+followers_info <- get_followers("WhiteHouse")
+```
+- `user` = Vector of user names, user IDs, or a mixture of both.
+
+- `n` = Number of tweets to return per timeline. Defaults to 100. Must be of length 1 or equal to length of user.
+```{r echo=FALSE}
+followers_info <- read_rds("../data/followers_info.rds")
+```
+]
+
+.pull-right[
+```{r echo=FALSE}
+followers_info
+```
+]
+
+---
+
+```{r eval=FALSE}
+friends_info_data <- lookup_users(friends_info$user_id)
+```
+
+```{r echo=FALSE}
+friends_info_data <- read_rds("../data/friends_info_data.rds")
+```
+
+```{r }
+friends_info_data[1:3,]
+tweets_data(friends_info_data[1:3,])
+```
+
+---
+
+### Otras funciones de interés `get_retweeters`
+```{r eval=FALSE}
+get_retweeters(status_id, n = 100, parse = TRUE, token = NULL)
+```
+Devuelve ID de los usuarios que han retwuiteado un determinado tweet. Actualmente está limitado a devolver un máximo número de 100 usuarios por tweet:
+
+- `status_id`: requiere el ID de un status.
+
+- `n`: Especifica el número de total de records que devolver.
+
+- `parse`: Lógica, indicando si hay que convertir el objeto obtenido en un lista de R. Por defecto TRUE.
+
+- `token`: Cada usuario debe tener su propio token. 
+
+---
+
+### Otras funciones de interés `get_retweets`
+```{r eval=FALSE}
+get_retweets(status_id, n = 100, parse = TRUE, token = NULL, ...)
+```
+
+Devuelve una colección de los retweets más recientes de un determinado tweet. NOTE: Twitter's API is currently limited to 100 or fewer retweeters.
+
+- `status_id`: requiere el ID de un status.
+
+- `n`: Especifica el número de total de records que devolver.
+
+- `parse`: Lógica, indicando si hay que convertir el objeto obtenido en un lista de R. Por defecto TRUE.
+
+- `token`: Cada usuario debe tener su propio token. 
+
+---
+layout: false
+
+# <i class="fas fa-save"></i> Guardar los datos `.csv`
+
+```{r eval=FALSE}
+write_as_csv(x = "", file_name = "")
+```
+Guardamos los datos en formato `.csv`:
+  - `x`: Objeto que queremos guardar, preferentemente en formato matriz de datos.
+  
+  - `file_name`: Dirección en la que queremos guardar el objeto. Ha de especifiarse el formato.
+
+```{r eval=FALSE}
+write_as_csv(x = followers_info_data, file_name = "./data/followers_info_data.csv")
+```
+
+---
+
+# Siguientes pasos:
+
+ - ## <i class="fas fa-glasses"></i> Explorar los datos
+ - ## <i class="fas fa-robot"></i> Persona o máquina
+ - ## <i class="fas fa-broom"></i> Clasificar temáticas
+ - ## <i class="fas fa-chart-line"></i> Analizar los datos
+
+---
+layout: true
+# <i class="fas fa-glasses"></i> Explorar los datos
+
+---
+
+Primer vistazo a los datos obtenidos y manipulación del texto:
+
+--
+
+- Observar la frecuencia de los tweets obtenidos, cuando se ha tuiteado más, coincidencia con fechas importantes.
+
+--
+
+- Nubes de palabras y otros gráficos exploratorios.
+
+--
+
+- Empezar a manipular el texto: `tm`, `quanteda`, `tidytext`.
+
+```{r echo=FALSE, out.width="20%", fig.align='center'}
+knitr::include_graphics("./01_twitter_files/tidytext.png")
+```
+
+---
+
+`ts_plot` es una función de `rtweet` que permite hacer un gráfico agrupando los tweets por fecha: 
+
+```{r eval=FALSE}
+ts_plot(data, by = "days")
+```
+Argumentos:
+
+- `data`: Conjunto de datos obtenidos a través de `rtweet`.
+
+- `by`: Intervalo de tiempo deseado: "secs", "mins", "hours", "days", "weeks", "months", o "years". 
+
+---
+layout: false
+
+```{r plot-rest-tweet, fig.show="hide", echo=FALSE}
+min_date <- format(min(rt$created_at), "%d-%m-%Y")
+max_date <- format(max(rt$created_at), "%d-%m-%Y")
+
+
+## plot time series of tweets
+rt %>% 
+  mutate(created_at = as.Date(format(created_at, "%Y-%b-%d"), "%Y-%b-%d")) %>% 
+  group_by(created_at) %>% 
+  summarise(Total = n()) %>% 
+  ggplot(mapping = aes(x = created_at, y = Total)) +
+  geom_line() +
+  geom_vline(xintercept = lubridate::ymd("2019-01-09"), linetype = "dashed", alpha = .5) +
+  scale_x_date(labels = function(x) format(x, "%d-%b"), date_breaks = "2 days") +
+  labs(
+    x = "", y = "Tweets per day",
+    title = 'Frequency of "#Vox" hashtag',
+    subtitle = str_glue("{min_date} / {max_date}",
+                        min_date = format(min(rt$created_at), "%d-%m-%Y"),
+                        max_date = format(max(rt$created_at), "%d-%m-%Y")),
+    caption = "Source: Data collected from Twitter's REST API via rtweet"
+  ) +
+  geom_vline(xintercept = as.POSIXct("2019-01-09 00:00:00 UTC"), 
+             linetype = "dashed") +
+  theme_minimal(base_size = 20) +
+  theme(plot.subtitle = element_text(size = rel(.95)),
+        plot.caption = element_text(size = rel(.80)),
+        axis.text.x = element_text(size = rel(.80)),
+        axis.text.y = element_text(size = rel(.80)),
+        axis.title.y = element_text(size = rel(.80)))
+```
+
+```{r ref.label="plot-rest-tweet", fig.callout = TRUE}
+
+```
+
+---
+
+```{r wordcloud, fig.show='hide', echo=FALSE}
+library(tidytext)
+
+replace_reg <- "https://t.co/[A-Za-z\\d]+|http://[A-Za-z\\d]+|&amp;|&lt;|&gt;|RT|https"
+unnest_reg <- "([^A-Za-z_\\d#@']|'(?![A-Za-z_\\d#@]))"
+
+custom_stop_words <- bind_rows(stop_words,
+                               tibble(word = tm::stopwords("spanish"),
+                                          lexicon = "custom"))
+
+rt %>% 
+  select(text) %>% 
+  mutate(text = stringi::stri_trans_general(text, "Latin-ASCII"),
+         text = str_replace_all(text, replace_reg, ""),
+         text = str_to_lower(text)) %>% 
+  unnest_tokens(word, text, token = "regex", pattern = unnest_reg) %>% 
+  filter(!word %in% custom_stop_words$word, str_detect(word, "[a-z]")) %>% 
+  count(word, sort = T) %>% 
+  mutate(type = case_when(str_detect(word, "^@") ~ "mention",
+                          str_detect(word, "^#") ~ "hashtag", TRUE ~ "text"),
+         type = as_factor(type)) -> rt_hashtag_mentions
+
+library(RColorBrewer)
+pal <- brewer.pal(9,"YlGnBu")
+pal <- pal[-(1:4)]
+set.seed(123)
+
+rt_hashtag_mentions %>% 
+  filter(type == "text") %>% 
+  with(wordcloud::wordcloud(word, n, max.words = 100,
+                            scale=c(5,0.1),
+                            random.order=FALSE,
+                            shape = "diamond",
+                            rot.per=0.35,
+                            use.r.layout=FALSE,
+                            colors=pal))
+```
+```{r ref.label="wordcloud", fig.callout = TRUE, echo=FALSE}
+
+```
+---
+layout: true
+
+# <i class="fas fa-glasses"></i> Explorar los datos
+
+---
+
+### Empezar a trabajar con el texto:
+
+Consideraciones importantes: 
+
+- `R` permite trabajar con texto.
+
+--
+
+- Twitter permite principalmente tres clases diferentes de texto: 
+
+--
+  - hashtags 
+
+--
+  - menciones 
+
+--
+  - texto plano
+
+--
+  - Además de los emoticonos! &#x1F649;
+
+--
+
+- **Bag of words**: método que se utiliza en el procesado del lenguaje para representar documentos ignorando hasta cierto punto el orden de las palabras.
+
+--
+
+- **Stemming process** o lematización: consiste en trabajar con la raíz de las palabras obviando las terminaciones y morfemas. 
+
+--
+
+- **Unspelling** o errores ortográficos
+
+---
+
+### <i class="fas fa-align-justify"></i> tidytext: text as data <sup>1</sup> 
+```{r echo=FALSE}
+knitr::include_graphics("./01_twitter_files/text_as_data.png")
+```
+
+.foot-note[
+[1] Welbers, K., Van Atteveldt, W., & Benoit, K. (2017). Text Analysis in R. COMMUNICATION METHODS AND MEASURES, 11(4), 245-265. http://doi.org/10.1080/19312458.2017.1387238
+]
+
+---
+
+### <i class="fas fa-align-justify"></i> text as data in R<sup>1</sup> 
+```{r echo=FALSE}
+knitr::include_graphics("./01_twitter_files/tidyflow-ch-1.png")
+```
+
+.foot-note[
+[1] Silge J, Robinson D (2016). “tidytext: Text Mining and Analysis Using Tidy Data
+Principles in R.” _JOSS_, *1*(3). doi: 10.21105/joss.00037 (URL:
+http://doi.org/10.21105/joss.00037), <URL: http://dx.doi.org/10.21105/joss.00037>.
+]
+
+
+---
+layout: false
+
+```{r tidy-flow-nlp, echo=FALSE, out.width="90%"}
+knitr::include_graphics("./01_twitter_files/tidyflow-nlp.png")
+```
+
+---
+
+### Bag of words
+```{r}
+text <- data_frame(txt = "Esto es un ejemplo de bag of words")
+
+text %>% 
+  unnest_tokens(word, txt) %>% count(word)
+```
+
+---
+
+### Stemming process
+
+```{r}
+text <- c("love", "loving", "lovingly", "loved", "lovely")
+
+corpus::text_tokens(text, stemmer = "en") %>% unlist()
+```
+
+---
+layout:false
+```{r bargraph, fig.show='hide', echo=FALSE}
+library(tidytext)
+
+replace_reg <- "https://t.co/[A-Za-z\\d]+|http://[A-Za-z\\d]+|&amp;|&lt;|&gt;|RT|https"
+unnest_reg <- "([^A-Za-z_\\d#@']|'(?![A-Za-z_\\d#@]))"
+
+custom_stop_words <- bind_rows(stop_words,
+                               tibble(word = tm::stopwords("spanish"),
+                                          lexicon = "custom"))
+
+rt %>% 
+  select(text) %>% 
+  mutate(text = stringi::stri_trans_general(text, "Latin-ASCII"),
+         text = str_replace_all(text, replace_reg, ""),
+         text = str_to_lower(text)) %>% 
+  unnest_tokens(word, text, token = "regex", pattern = unnest_reg) %>% 
+  filter(!word %in% custom_stop_words$word, str_detect(word, "[a-z]")) %>% 
+  mutate(word = corpus::text_tokens(word, stemmer = "sp")) %>% 
+  unlist() %>% 
+  tibble(word = .) %>% 
+  count(word, sort = T) %>% 
+  mutate(type = case_when(str_detect(word, "^@") ~ "mention",
+                          str_detect(word, "^#") ~ "hashtag", TRUE ~ "text"),
+         type = as_factor(type)) -> rt_hashtag_mentions
+
+rt_hashtag_mentions %>% 
+  top_n(11, n) %>%
+  filter(!word == "#vox") %>% 
+  ggplot(aes(fct_reorder(word, n), n, fill = n)) + 
+  geom_col(colour="black", width = 0.5) +
+  xlab(NULL) +
+  ggtitle("Frequency words in Tweet Corpus") +
+  scale_fill_distiller(palette = "Blues", direction = 1) +
+  guides(fill=FALSE, color=FALSE) +
+  coord_flip() +
+  theme_minimal(base_size = 20)
+```
+
+```{r ref.label="bargraph", fig.callout = TRUE, echo=FALSE}
+
+```
+---
+```{r bargraph-good, echo=FALSE, fig.show='hide'}
+rt_hashtag_mentions %>% 
+  select(type, word, n) %>% 
+  filter(!word %in% c("#vox")) %>% 
+  group_by(type) %>% 
+  top_n(10) %>% 
+  ungroup() %>% 
+  ggplot(aes(x = reorder_within(word, n, type), y = n, fill = type)) +
+  geom_col(show.legend = F, width = 0.5, colour = "black") +
+  xlab(NULL) +
+  ylab(NULL) +
+  scale_x_reordered() +
+  facet_wrap(~ type, scales = "free") +
+  coord_flip() +
+  labs(
+    title = ("Frecuencia de hashtags, texto y menciones"),
+    subtitle = ("Stop words y #vox eliminados de la lista")) +
+  scale_fill_brewer(palette = "Pastel1", direction = 1) +
+  theme_classic(base_size = 20) +
+  theme(plot.subtitle = element_text(size = rel(.95)),
+        plot.caption = element_text(size = rel(.80)),
+        axis.text.x = element_text(size = rel(.70)),
+        axis.text.y = element_text(size = rel(.80)),
+        axis.title.y = element_text(size = rel(.8)),
+        strip.text.x = element_text(size = rel(.8)))
+```
+
+```{r ref.label='bargraph-good', fig.callout = TRUE, echo=FALSE}
+
+```
+
+---
+```{r network, echo=FALSE, fig.show='hide'}
+library(tidytext)
+rt %>% 
+  select(text) %>% 
+  mutate(text = stringi::stri_trans_general(text, "Latin-ASCII"),
+         text = str_replace_all(text, replace_reg, ""),
+         text = str_to_lower(text)) %>% 
+  unnest_tokens(word1, text, token = "regex", pattern = unnest_reg) %>%
+  mutate(word2 = lead(word1)) %>% 
+  filter(!word1 %in% custom_stop_words$word) %>%
+  filter(!word2 %in% custom_stop_words$word) %>% 
+  count(word1, word2, sort = T) -> paired_word_rt
+
+library(ggraph)
+
+#### Network of #Vox
+library(tidygraph)
+
+paired_word_rt %>% 
+  filter(word1 == "#vox" | word2 == "#vox") %>% 
+  top_n(100) %>% 
+  as_tbl_graph(directed = F) %>% 
+  activate(nodes) %>% 
+  mutate(neighbors = centrality_degree()) %>%
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(edge_alpha = n), width = 1) + 
+  geom_node_point(aes(colour = neighbors), size = 3) +
+  geom_node_text(aes(label = name), vjust = 1.8, size = 3) +
+  scale_color_distiller(palette = "Spectral", direction = -1) +
+  labs(title = "Relación de pares de palabras a #vox") +
+  theme_graph(base_size = 11)
+
+```
+
+```{r ref.label="network", fig.callout = TRUE, echo=FALSE}
+
+```
+
+---
+```{r network2, echo=FALSE, fig.show='hide'}
+paired_word_rt %>% 
+  top_n(70) %>% 
+  filter(!word1 == "#vox", !word2 == "#vox") %>%
+  as_tbl_graph(directed = F) %>% 
+  activate(nodes) %>% 
+  mutate(neighbors = centrality_degree()) %>%
+  ggraph(layout = "graphopt") +
+  geom_edge_link(aes(edge_alpha = n), width = 1) + 
+  geom_node_point(aes(colour = neighbors), size = 3) +
+  geom_node_text(aes(label = name), vjust = 1.8, size = 3) +
+  scale_color_distiller(palette = "Spectral", direction = -1) +
+  labs(title = "Relación de pares de palabras",
+       subtitle = "#vox suprimido ",
+       x = "", y = "") +
+  theme_graph(base_size = 11)
+```
+
+```{r ref.label="network2", fig.callout = TRUE, echo=FALSE}
+
+```
+
+---
+
+```{r world-map-rest-api, fig.show='hide', echo=FALSE}
+## create lat/lng variables using all available tweet and profile geo-location data
+rt_lat_lng <- rtweet::lat_lng(rt)
+mspain <- map_data("world")
+mspain <- mspain[mspain$region != "Antarctica",]
+
+## plot with ggplot
+
+ggplot() +
+  geom_polygon(data = mspain, 
+               aes(x = long, y = lat, group = group, fill = region),
+               fill = NA, color = "black", size = .3) +
+  geom_point(data = rt_lat_lng, 
+             aes(x = lng, y = lat), colour = "#ee5863") +
+  labs(title = 'Geocoded tweets with "#Vox" hashtag') +
+  theme_map(base_size = 24, base_family = 'Yanone Kaffeesatz') +
+  theme(plot.subtitle = element_text(size = rel(.95)),
+        plot.caption = element_text(size = rel(.80)))
+
+```
+
+```{r ref.label="world-map-rest-api", fig.callout = TRUE}
+
+```
+---
+```{r spain-map-rest-api, fig.show='hide', echo=FALSE}
+ggplot() +
+  geom_polygon(data = mspain, 
+               aes(x = long, y = lat, group = group, fill = region),
+               fill = NA, color ="black") +
+  geom_point(data = rt_lat_lng, 
+             aes(x = lng, y = lat), colour = "#ee5863") +
+  coord_map(xlim = c(-9.8, 4.84), ylim = c(35.35,43.89)) +
+  labs(title = "Geocoded tweets with #Vox hashtag") +
+  theme_map(base_size = 24, base_family = 'Yanone Kaffeesatz') +
+  theme(plot.subtitle = element_text(size = rel(.95)),
+        plot.caption = element_text(size = rel(.80)))
+
+```
+```{r ref.label="spain-map-rest-api", fig.callout = TRUE}
+
+```
+---
+
+# <i class="fas fa-robot"></i> ¿Quién twitea? 
+
+```{r  bots, echo=FALSE, out.width = '60%', fig.align='center'}
+knitr::include_graphics("./01_twitter_files/u_bot.png") 
+```
+
+---
+
+# <i class="fas fa-broom"></i> Data cleaning
+### Clasificación y limpieza:
+.pull-left[
+**Supervised learning:**
+  - Se conoce a priori las categorías.
+  
+  - Una parte ha sido codificada a mano previarmente.
+  
+  - Clasificar en función de una serie de características.
+
+]
+
+.pull-right[
+**Unsupervised learning:**
+  - Pueden no conocerse a priori las categorías.
+  
+  - No hay clasificación previa.
+  
+  - Suele clasificarse en función del propio contenido del texto, aunque también puede hacerse teniendo en cuenta las características.
+]
+
+---
+
+# <i class="fas fa-broom"></i> Data cleaning
+
+**Advanced NLP:**
+- Lematización
+
+- Part-of-speech tagging
+
+- Dependency parsing
+
+- Word positions and syntax: unigram, bigrams, trigrams
+
+---
+layout:false
+class: center, middle, inverse
+
+```{r echo=FALSE, out.width="20%"}
+knitr::include_graphics(c("./01_twitter_files/rtweet.png", "./01_twitter_files/botornot.png", "./01_twitter_files/tidytext.png", "./01_twitter_files/tidyverse.png"))
+```
+
+---
+layout: true
+
+# <i class="fab fa-facebook-square"></i> Facebook data
+
+---
+
+```{r echo = FALSE}
+knitr::include_graphics("./01_twitter_files/facebook policy.png")
+```
+
+Más información: [link](https://developers.facebook.com/docs/pages/)
+---
+
+
+Paquetes antes utilizados:
+ - `Rfacebook`: 
+   - Pablo Barbera, Michael Piccirilli, Andrew Geisler and Wouter van Atteveldt
+    (2017). Rfacebook: Access to Facebook API via R. R package version 0.6.15.
+    
+ - `fbRAds`: 
+  - jaykumar Gopal and Gergely Daroczi (2016). fbRads: Analyzing and Managing
+    Facebook Ads from R. R package version 0.2.
+
+ - `rfacebookstat`: 
+  - Alexey Seleznev (2018). rfacebookstat: Load Data from Facebook API
+    Marketing. R package version 1.8.3.
+
+
+---
+layout: false
+
+# <i class="fas fa-archive"></i> Repositorios
+
+ - [UCI Network Data Repository](http://networkdata.ics.uci.edu/)
+
+ - [Network Repository. An Interactive Scientific Data Repository.](http://networkrepository.com/team.php)
+ 
+ - [Stanford Large Network Dataset Collection](https://snap.stanford.edu/data/)
+ 
+.center[
+<i class="fas fa-plus"></i>
+]
+
+```{r echo=FALSE, fig.align='center', out.width= "50%"}
+knitr::include_graphics("./01_twitter_files/gephi.png")
+```
+ 
+---
+class: center, middle
+
+# Thanks!
+
+Slides created via the R package [**xaringan**](https://github.com/yihui/xaringan).
+
+The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.name/knitr), and [R Markdown](https://rmarkdown.rstudio.com).
