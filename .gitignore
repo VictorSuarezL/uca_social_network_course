@@ -3,3 +3,9 @@
 .RData
 .Ruserdata
 .httr-oauth
+/slides/01_twitter_cache
+/slides/libs
+/data
+/Dia1_CursoR
+/static
+.Rproj
